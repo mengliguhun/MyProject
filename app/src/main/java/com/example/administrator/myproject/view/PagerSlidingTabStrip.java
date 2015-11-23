@@ -240,6 +240,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         addTab(position, tab);
 
+
+
+
+
     }
 
     private void addTab(final int position, View tab) {
