@@ -15,6 +15,7 @@ package com.example.administrator.myproject.view;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
