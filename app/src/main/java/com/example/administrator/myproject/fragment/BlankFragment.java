@@ -4,11 +4,29 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.example.administrator.myproject.R;
+import com.example.administrator.myproject.adapter.ListViewAdapter;
+import com.example.administrator.myproject.adapter.RecyclerViewAdapter;
+import com.example.administrator.myproject.httputils.HttpUtils;
+import com.example.administrator.myproject.httputils.HttpUtils.Contributor;
+import com.example.administrator.myproject.view.DividerItemDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +70,28 @@ public class BlankFragment extends Fragment {
         return fragment;
     }
 
+    private ListView listView;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private View rootView;
+    private List<Contributor> list = new ArrayList<>();
+    private ListViewAdapter adapter;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private Callback<List<Contributor>> callback = new Callback<List<Contributor>>() {
+        @Override
+        public void onResponse(Response<List<Contributor>> response, Retrofit retrofit) {
+            list.clear();
+            list.addAll(response.body());
+            adapter.notifyDataSetChanged();
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,15 +99,37 @@ public class BlankFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blank, container, false);
+        rootView = inflater.inflate(R.layout.fragment_blank, container, false);
+        initViews();
+        initData();
+        return rootView;
     }
+    private void initViews(){
+        listView = (ListView) rootView.findViewById(R.id.listView);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
+    }
+    private void initData(){
+        adapter = new ListViewAdapter(getActivity(),list);
+        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(),list);
+        linearLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST,false));
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+//        listView.setAdapter(adapter);
+
+        if (mParam2.equals("title1")){
+            HttpUtils.getContributors(callback);
+        }
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

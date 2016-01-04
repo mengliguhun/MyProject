@@ -229,7 +229,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private void addTextTab(final int position, String title) {
 
-        TraceView tab = new TraceView(getContext());
+        ColorTrackView tab = new ColorTrackView(getContext());
         tab.setText(title);
 //        tab.setGravity(Gravity.CENTER);
 //        tab.setSingleLine();
@@ -292,7 +292,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 }
             }
             else{
-                TraceView tab = (TraceView) v;
+                ColorTrackView tab = (ColorTrackView) v;
                 tab.setTextSize(tabTextSize);
 
                 if (selectPosition == i) {
@@ -383,11 +383,11 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             scrollToChild(position, (int) (positionOffset * tabsContainer.getChildAt(position).getWidth()));
 
             if (!isTabClicked){
-                TraceView curTab = (TraceView) tabsContainer.getChildAt(currentPosition );
-                TraceView nextTab = (TraceView) tabsContainer.getChildAt(currentPosition + 1);
+                ColorTrackView curTab = (ColorTrackView) tabsContainer.getChildAt(currentPosition );
+                ColorTrackView nextTab = (ColorTrackView) tabsContainer.getChildAt(currentPosition + 1);
                 if (positionOffset >0){
-                    curTab.setDirection(0);
-                    nextTab.setDirection(1);
+                    curTab.setDirection(1);
+                    nextTab.setDirection(0);
                     curTab.setProgress(1-positionOffset);
                     nextTab.setProgress(positionOffset);
                 }

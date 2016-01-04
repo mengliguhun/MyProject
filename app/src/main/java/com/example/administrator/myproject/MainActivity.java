@@ -21,7 +21,6 @@ import com.example.administrator.myproject.view.PagerSlidingTabStrip;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,BlankFragment.OnFragmentInteractionListener {
     private FloatingActionButton fab;
@@ -39,6 +38,7 @@ public class MainActivity extends BaseActivity
         initViews();
         bindViews();
         initData();
+
     }
 
     @Override
