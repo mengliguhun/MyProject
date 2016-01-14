@@ -61,6 +61,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         return fragment;
     }
 
+    private boolean fragmentVisible;
     private int pageSize=30, pageNo=1;
     private int rqcount=0;
     private int currentPos;
@@ -86,7 +87,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                             list.addAll(response.body().getItems());
                             //视频
                             if (mParam1.equals("2")){
-                                updateVideoItem(0,true);
+                                updateVideoItem(0,fragmentVisible);
                             }
                         }
                     }
@@ -177,16 +178,30 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                     onLoadMore();
                 }
 
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
                 //视频
                 if (mParam1.equals("2")){
 
                     int firstVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                    if (firstVisibleItem >=0){
-                        if (currentPos != firstVisibleItem){
-                            updateVideoItem(currentPos,false);
-                            currentPos = firstVisibleItem;
-                            updateVideoItem(currentPos,true);
+                    if (firstVisibleItem >=0 ){
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                            if (currentPos != firstVisibleItem){
+                                updateVideoItem(currentPos,false);
+                                currentPos = firstVisibleItem;
+                                updateVideoItem(currentPos,fragmentVisible == true);
+                            }
                         }
+                        else {
+                            if (list.get(currentPos).isVisible()){
+                                updateVideoItem(currentPos,false);
+                            }
+
+                        }
+
                     }
 
 
@@ -217,11 +232,18 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
             mListener.onFragmentInteraction(uri);
         }
     }
-    private void updateVideoItem(int position,boolean isVisble){
+    private void updateVideoItem(int position,boolean isVisible){
 
-//        list.get(position).setIsVisible(isVisble);
-//        recyclerViewAdapter.notifyItemChanged(position);
+        list.get(position).setIsVisible(isVisible);
+        recyclerViewAdapter.notifyItemChanged(position);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        fragmentVisible = isVisibleToUser;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -247,8 +269,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
             HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
         else if(mParam1.equals("2")){
-//            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
-            HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
     }
     @Override
@@ -263,8 +284,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
             HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
         else if(mParam1.equals("2")){
-//            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
-            HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
     }
 
