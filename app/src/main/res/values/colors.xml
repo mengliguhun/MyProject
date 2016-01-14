@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="divider">#f2f2f2</color>
+    <color name="white">@android:color/white</color>
+    <color name="blank">@android:color/black</color>
+    <color name="green_light">#81C784</color>
+    <color name="green">#4CAF50</color>
+    <color name="green_dark">#2E7D32</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="background_tab_pressed">#6633B5E5</color>
     <color name="half_transparent">#e0000000</color>
+    <color name="dim_foreground_dark">#bebebe</color>
+    <color name="text_color_gray">#8e8071</color>
+    <color name="text_title_color">#333333</color>
 </resources>

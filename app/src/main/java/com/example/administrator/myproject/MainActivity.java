@@ -14,15 +14,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.example.administrator.myproject.adapter.MyFragmentStateViewPagerAdapter;
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
-import com.example.administrator.myproject.fragment.BlankFragment;
+import com.example.administrator.myproject.fragment.FragmentItem;
+import com.example.administrator.myproject.fragment.IndexPage;
 import com.example.administrator.myproject.view.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,BlankFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentItem.OnFragmentInteractionListener {
     private FloatingActionButton fab;
     private DrawerLayout drawer;
     private Toolbar toolbar;
@@ -38,7 +40,6 @@ public class MainActivity extends BaseActivity
         initViews();
         bindViews();
         initData();
-
     }
 
     @Override
@@ -53,7 +54,9 @@ public class MainActivity extends BaseActivity
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setIndicatorHeight(4);
-        tabs.setIndicatorColor(Color.RED);
+        tabs.setIndicatorColor(getResources().getColor(R.color.green_light));
+        tabs.setTextColor(getResources().getColor(R.color.text_color_gray));
+        tabs.setTabCurrentTextColor(getResources().getColor(R.color.green_light));
 
         viewPager = (ViewPager) findViewById(R.id.pager);
     }
@@ -81,9 +84,11 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void initData() {
-        for (int i =0 ;i<9 ;i++){
-            titles.add("title"+(i+1));
-        }
+
+        titles.add("搞文");
+        titles.add("搞图");
+        titles.add("视频");
+
         adapter = new MyFragmentViewPagerAdapter(getSupportFragmentManager(),titles);
         viewPager.setAdapter(adapter);
         tabs.setViewPager(viewPager);

@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.administrator.myproject.R;
-import com.example.administrator.myproject.httputils.HttpUtils.Contributor;
+import com.example.administrator.myproject.bean.FunnyListResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.List;
 
 public class ListViewAdapter extends BaseAdapter {
 
-    private List<Contributor> objects = new ArrayList<>();
+    private List<FunnyListResult.ItemsEntity> objects = new ArrayList<>();
 
     private Context context;
     private LayoutInflater layoutInflater;
 
-    public ListViewAdapter(Context context,List<Contributor> objects) {
+    public ListViewAdapter(Context context,List<FunnyListResult.ItemsEntity> objects) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.objects = objects;
@@ -60,8 +60,8 @@ public class ListViewAdapter extends BaseAdapter {
 
     private void initializeViews(Object object, ViewHolder holder) {
         //TODO implement
-        Contributor contributor = (Contributor) object;
-        holder.text.setText(contributor.toString());
+//        Contributor contributor = (Contributor) object;
+//        holder.text.setText(contributor.toString());
     }
 
     protected class ViewHolder {

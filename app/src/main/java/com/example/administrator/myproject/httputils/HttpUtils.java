@@ -1,48 +1,111 @@
 package com.example.administrator.myproject.httputils;
 
-import java.util.List;
+import com.example.administrator.myproject.ApplicationController;
+import com.example.administrator.myproject.bean.FunnyListResult;
+import com.example.administrator.myproject.utils.SystemInfoUtil;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit.http.Query;
+
 /**
  * Created by Administrator on 2015/12/23.
  */
 public class HttpUtils {
     private static final String API_URL = "https://api.github.com";
-    public static class Contributor {
-        String login;
-        int contributions;
+    private static final String API_URL_QB = "http://m2.qiushibaike.com";
+    private static final String API_URL_QB_PIC ="http://pic.qiushibaike.com/system/pictures/";//http://pic.qiushibaike.com/system/pictures/11457/114570376/medium/app114570376.jpg
 
-        @Override
-        public String toString() {
-            return login + ", " + contributions;
-        }
+    interface QiuBaiServer{
+
+        @GET("/article/list/text")
+        Call<FunnyListResult> funnyTextListResult(
+                @Query("page") String page,
+                @Query("count") String count,
+                @Query("readarticles") String readarticles,
+                @Query("rqcnt") String rqcnt,
+                @Query("r") String r);
+        @GET("/article/list/imgrank")
+        Call<FunnyListResult> funnyImgListResult(
+                @Query("page") String page,
+                @Query("count") String count,
+                @Query("readarticles") String readarticles,
+                @Query("rqcnt") String rqcnt,
+                @Query("r") String r);
+        @GET("/article/list/video")
+        Call<FunnyListResult> funnyVideoListResult(
+                @Query("page") String page,
+                @Query("count") String count,
+                @Query("readarticles") String readarticles,
+                @Query("rqcnt") String rqcnt,
+                @Query("r") String r);
 
     }
+    private static QiuBaiServer getQiuBaiServer(){
+        Interceptor interceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request().newBuilder()
+                        .addHeader("User-Agent","qiushibalke_9.0.2_WIFI_auto_20")
+                        .addHeader("Source","android_9.0.2")
+                        .addHeader("Model",SystemInfoUtil.getFingerPrint())
+                        .addHeader("Uuid","IMEI_"+ApplicationController.getInstance().deviceUuid.toString().replaceAll("-",""))
+                        .addHeader("Deviceidinfo", ApplicationController.getInstance().deviceidInfo)
+                        .build();
+                return chain.proceed(request);
+            }
+        };
 
-    interface GitHub{
-        @GET("/repos/{owner}/{repo}/contributors")
-        Call<List<Contributor>> contributors(@Path("owner") String owner, @Path("repo") String repo);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.interceptors().add(interceptor);
 
-    }
-
-    public static void getContributors(Callback<List<Contributor>> callback) {
-        // Create a very simple REST adapter which points the GitHub API
-        // endpoint.
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
+                .baseUrl(API_URL_QB)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
 
-        GitHub github = retrofit.create(GitHub.class);
+        QiuBaiServer qiuBaiServer = retrofit.create(QiuBaiServer.class);
 
-        // Fetch and print a list of the contributors to this library.
-        Call<List<Contributor>> call =  github.contributors("square", "retrofit");
+        return qiuBaiServer;
+    }
+    public static void getFunnyTextListResult(Callback<FunnyListResult> callback,
+           String page,String count,String readarticles,String rqcnt) {
+
+        String r= ApplicationController.getInstance().deviceUuid.toString().substring(ApplicationController.getInstance().deviceUuid.toString().length()-8)+System.currentTimeMillis();
+        Call<FunnyListResult> call =  getQiuBaiServer().funnyTextListResult(page, count, readarticles,rqcnt,r);
         call.enqueue(callback);
+
+    }
+    public static void getFunnyImgListResult(Callback<FunnyListResult> callback,
+                                              String page,String count,String readarticles,String rqcnt) {
+
+        String r= ApplicationController.getInstance().deviceUuid.toString().substring(ApplicationController.getInstance().deviceUuid.toString().length()-8)+System.currentTimeMillis();
+        Call<FunnyListResult> call =  getQiuBaiServer().funnyImgListResult(page, count, readarticles, rqcnt, r);
+        call.enqueue(callback);
+
+    }
+    public static void getFunnyVideoListResult(Callback<FunnyListResult> callback,
+                                             String page,String count,String readarticles,String rqcnt) {
+
+        String r= ApplicationController.getInstance().deviceUuid.toString().substring(ApplicationController.getInstance().deviceUuid.toString().length()-8)+System.currentTimeMillis();
+        Call<FunnyListResult> call =  getQiuBaiServer().funnyVideoListResult(page, count, readarticles, rqcnt, r);
+        call.enqueue(callback);
+
+    }
+    public static String getImageUrl(String name,String id){
+        String url;
+        url = API_URL_QB_PIC+id.substring(0,5)+"/"+id+"/medium/"+name;
+        return url;
 
     }
 }
