@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,6 +15,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.example.administrator.myproject.adapter.MyFragmentStateViewPagerAdapter;
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
@@ -29,7 +35,7 @@ public class MainActivity extends BaseActivity
     private DrawerLayout drawer;
     private Toolbar toolbar;
     private NavigationView navigationView;
-    private PagerSlidingTabStrip tabs;
+    private TabLayout tabLayout;
     private ViewPager viewPager;
     private MyFragmentViewPagerAdapter adapter;
     private List<String> titles = new ArrayList<>();
@@ -52,13 +58,9 @@ public class MainActivity extends BaseActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabs.setIndicatorHeight(4);
-        tabs.setIndicatorColor(getResources().getColor(R.color.green_light));
-        tabs.setTextColor(getResources().getColor(R.color.text_color_gray));
-        tabs.setTabCurrentTextColor(getResources().getColor(R.color.green_light));
-
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout.setSelectedTabIndicatorHeight(0);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
     }
 
     @Override
@@ -91,9 +93,24 @@ public class MainActivity extends BaseActivity
 
         adapter = new MyFragmentViewPagerAdapter(getSupportFragmentManager(),titles);
         viewPager.setAdapter(adapter);
-        tabs.setViewPager(viewPager);
-    }
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(1);//解决默认0不选中
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setCustomView(getTabView(i));
+            }
+        }
+        viewPager.setCurrentItem(0);
 
+    }
+    public View getTabView(int position) {
+        View v = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        TextView tv = (TextView) v.findViewById(R.id.textView);
+        tv.setText(titles.get(position));
+        ImageView img = (ImageView) v.findViewById(R.id.imageView);
+        return v;
+    }
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

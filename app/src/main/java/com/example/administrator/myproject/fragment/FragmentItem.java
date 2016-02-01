@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -177,7 +178,17 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                     isLoadingMore = true;
                     onLoadMore();
                 }
+                //视频
+                if (mParam1.equals("2")){
 
+                    int firstVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    if (firstVisibleItem >=0 ){
+                        if (currentPos != firstVisibleItem){
+                            updateVideoItem(currentPos,false);
+                        }
+                    }
+                    Log.e("firstVisibleItem",firstVisibleItem+"");
+                }
             }
 
             @Override
@@ -187,13 +198,11 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                 if (mParam1.equals("2")){
 
                     int firstVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                    if (firstVisibleItem >=0 ){
+                    Log.e("firstVisibleItem",firstVisibleItem+" onScrollStateChanged");
+                    if (firstVisibleItem >=0 && currentPos != firstVisibleItem){
                         if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                            if (currentPos != firstVisibleItem){
-                                updateVideoItem(currentPos,false);
-                                currentPos = firstVisibleItem;
-                                updateVideoItem(currentPos,fragmentVisible == true);
-                            }
+                            currentPos = firstVisibleItem;
+                            updateVideoItem(currentPos,fragmentVisible);
                         }
                         else {
                             if (list.get(currentPos).isVisible()){

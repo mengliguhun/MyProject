@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +15,13 @@ import android.widget.ListView;
 
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.adapter.ListViewAdapter;
+import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.adapter.RecyclerViewAdapter;
 import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httputils.HttpUtils;
 import com.example.administrator.myproject.view.DividerItemDecoration;
 import com.example.administrator.myproject.view.HaloToast;
+import com.example.administrator.myproject.view.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,34 +72,12 @@ public class IndexPage extends BaseFragment {
         return fragment;
     }
 
-    private int pageSize=30, pageNo=1;
-    private RecyclerView recyclerView;
-    private LinearLayoutManager linearLayoutManager;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private PagerSlidingTabStrip tabs;
+    private ViewPager viewPager;
+    private MyFragmentViewPagerAdapter adapter;
+    private List<String> titles = new ArrayList<>();
+
     private View rootView;
-    private List<FunnyListResult.ItemsEntity> list = new ArrayList<>();
-    private ListViewAdapter adapter;
-    private RecyclerViewAdapter recyclerViewAdapter;
-    private Callback<FunnyListResult> callback = new Callback<FunnyListResult>() {
-        @Override
-        public void onResponse(Response<FunnyListResult> response, Retrofit retrofit) {
-            swipeRefreshLayout.setRefreshing(false);
-            if (response.code() == 200) {
-                list.clear();
-                list.addAll(response.body().getItems());
-                adapter.notifyDataSetChanged();
-                recyclerViewAdapter.notifyDataSetChanged();
-            } else {
-                HaloToast.show(getActivity(), "服务器错误");
-            }
-
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            HaloToast.show(getActivity(), t.getMessage());
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,29 +109,29 @@ public class IndexPage extends BaseFragment {
     }
 
     protected void initViews() {
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
+        tabs.setIndicatorHeight(4);
+        tabs.setIndicatorColor(getResources().getColor(R.color.green_light));
+        tabs.setTextColor(getResources().getColor(R.color.text_color_gray));
+        tabs.setTabCurrentTextColor(getResources().getColor(R.color.green_light));
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
+        viewPager = (ViewPager) rootView.findViewById(R.id.pager);
     }
 
     protected void init() {
         super.init();
-        adapter = new ListViewAdapter(getActivity(), list);
-        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
-        linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST, false));
-        recyclerView.setAdapter(recyclerViewAdapter);
+        titles.add("搞文");
+        titles.add("搞图");
+        titles.add("视频");
 
+        adapter = new MyFragmentViewPagerAdapter(getChildFragmentManager(),titles);
+        viewPager.setAdapter(adapter);
+        tabs.setViewPager(viewPager);
+        
     }
 
     @Override
     protected void bindViews() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-            }
-        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
