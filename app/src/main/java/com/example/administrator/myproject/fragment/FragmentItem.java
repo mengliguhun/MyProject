@@ -65,7 +65,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     private boolean fragmentVisible;
     private int pageSize=30, pageNo=1;
     private int rqcount=0;
-    private int currentPos;
+    private int currentPos=-1;
     private boolean isLoadingMore;
     private boolean isLoadingMoreAll = false;
     private RecyclerView recyclerView;
@@ -79,6 +79,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         @Override
         public void onResponse(Response<FunnyListResult> response, Retrofit retrofit) {
             swipeRefreshLayout.setRefreshing(false);
+
             if (response.code() == 200) {
 
                 if (response.body() !=null && response.body().getItems() !=null){
@@ -86,10 +87,6 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                         if (response.body().getItems().size()>0){
                             list.clear();
                             list.addAll(response.body().getItems());
-                            //视频
-                            if (mParam1.equals("2")){
-                                updateVideoItem(0,fragmentVisible);
-                            }
                         }
                     }
                     else{
@@ -106,12 +103,11 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                 if (isLoadingMore){
                     isLoadingMore = false;
                 }
-
             } else {
                 HaloToast.show(getActivity(), "服务器错误");
             }
-
         }
+
 
         @Override
         public void onFailure(Throwable t) {
@@ -184,6 +180,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                     int firstVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
                     if (firstVisibleItem >=0 ){
                         if (currentPos != firstVisibleItem){
+                            currentPos = firstVisibleItem;
                             updateVideoItem(currentPos,false);
                         }
                     }
@@ -242,9 +239,11 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         }
     }
     private void updateVideoItem(int position,boolean isVisible){
+        if (list.size()>0){
+            list.get(position).setIsVisible(isVisible);
+            recyclerViewAdapter.notifyItemChanged(position);
+        }
 
-        list.get(position).setIsVisible(isVisible);
-        recyclerViewAdapter.notifyItemChanged(position);
     }
 
     @Override
@@ -285,6 +284,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         rqcount++;
         pageNo=1;
+        currentPos = -1;
         isLoadingMoreAll = false;
         if (mParam1.equals("0")){
             HttpUtils.getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");

@@ -39,6 +39,7 @@ public class MainActivity extends BaseActivity
     private ViewPager viewPager;
     private MyFragmentViewPagerAdapter adapter;
     private List<String> titles = new ArrayList<>();
+    private int tabImgs[] = {R.drawable.tab_icon_selector_text,R.drawable.tab_icon_selector_pic,R.drawable.tab_icon_selector_video};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +110,7 @@ public class MainActivity extends BaseActivity
         TextView tv = (TextView) v.findViewById(R.id.textView);
         tv.setText(titles.get(position));
         ImageView img = (ImageView) v.findViewById(R.id.imageView);
+        img.setImageResource(tabImgs[position]);
         return v;
     }
     @Override

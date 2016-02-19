@@ -115,7 +115,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             ImageLoader.getInstance()
                     .displayImage(entity.getPic_url(), holder.image, ImageLoaderUtil.getDisplayImageOptions());
             holder.textureView.setLayoutParams(params);
-            holder.progressBar.setVisibility(View.VISIBLE);
+
             try {
                 holder.textureView.setDataSource(context, Uri.parse(entity.getHigh_url()));
                 holder.textureView.setScalableType(ScalableType.FIT_XY);
@@ -123,18 +123,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     if (holder.textureView.isPlaying()) {
                         holder.textureView.stop();
                     }
+                    holder.progressBar.setVisibility(View.GONE);
                 }
                 else {
-                    holder.textureView.prepareAsync(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            if (entity.isVisible()){
-                                holder.progressBar.setVisibility(View.GONE);
-                                holder.textureView.start();
-                            }
+                    if (!holder.textureView.isPlaying()) {
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                        holder.textureView.prepareAsync(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                if (entity.isVisible()){
+                                    holder.progressBar.setVisibility(View.GONE);
+                                    holder.textureView.start();
+                                }
 
-                        }
-                    });
+                            }
+                        });
+                    }
+
+
                 }
 
                 holder.textureView.setOnClickListener(new View.OnClickListener() {

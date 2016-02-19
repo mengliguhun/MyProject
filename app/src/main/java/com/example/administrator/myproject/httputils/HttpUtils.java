@@ -55,11 +55,12 @@ public class HttpUtils {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request().newBuilder()
-                        .addHeader("User-Agent","qiushibalke_9.0.2_WIFI_auto_20")
-                        .addHeader("Source","android_9.0.2")
+                        .addHeader("User-Agent","qiushibalke_9.1.0_WIFI_auto_19")
+                        .addHeader("Source","android_9.1.0")
                         .addHeader("Model",SystemInfoUtil.getFingerPrint())
                         .addHeader("Uuid","IMEI_"+ApplicationController.getInstance().deviceUuid.toString().replaceAll("-",""))
                         .addHeader("Deviceidinfo", ApplicationController.getInstance().deviceidInfo)
+//                        .addHeader("Origin", "http://stackexchange.com")
                         .build();
                 return chain.proceed(request);
             }
