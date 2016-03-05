@@ -1,5 +1,6 @@
 package com.example.administrator.myproject;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,13 @@ import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
 import com.example.administrator.myproject.fragment.IndexPage;
 import com.example.administrator.myproject.view.PagerSlidingTabStrip;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +54,28 @@ public class MainActivity extends BaseActivity
         initViews();
         bindViews();
         initData();
+        //创建okHttpClient对象
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+//创建一个Request
+        final Request request = new Request.Builder()
+                .url("http://m2.qiushibaike.com/article/list/text?page=1&count=30")
+                .build();
+//new call
+        Call call = mOkHttpClient.newCall(request);
+//请求加入调度
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                String htmlStr =  "";
+            }
+            @Override
+            public void onResponse(final Response response) throws IOException
+            {
+                String htmlStr =  response.body().string();
+                response.body().string();
+            }
+        });
     }
 
     @Override
@@ -129,7 +158,7 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camara) {
-            // Handle the camera action
+            startActivity(new Intent(this,CustomViewsActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
