@@ -37,7 +37,7 @@ public class PasswordInputView extends View {
     private int mTextColor = Color.BLACK;//字体颜色
     private Paint mBorderPaint;//边框背景颜色
     private int mBorderColor = Color.BLUE;
-    private float mBorderWidth = 2;//边框大小
+    private float mBorderWidth = 4;//边框大小
     private int mBackgroundColor = Color.WHITE;//背景色
     private Paint mDividerPaint;//分割线
     private float mDividerWidth = 2;//分割线宽度
@@ -49,7 +49,7 @@ public class PasswordInputView extends View {
     private int mNum = 4;//输入内容长度
 
 
-    private EditText mInputView;
+    private EditText mInputView;//设置EditText用于获取焦点弹出键盘
     public EditText getInputView() {
         return mInputView;
     }
@@ -62,7 +62,7 @@ public class PasswordInputView extends View {
         mInputView.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mNum)});
         mInputView.addTextChangedListener(textWatcher);
     }
-
+    //谈键盘
     private void forceInputViewGetFocus() {
         if (mInputView == null){
             return;
@@ -88,7 +88,7 @@ public class PasswordInputView extends View {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            invalidate();
+            invalidate();//内容发生改变时重新绘制
 
         }
 
@@ -254,6 +254,7 @@ public class PasswordInputView extends View {
         for (int i = 1; i < mNum; i++) {
             canvas.drawLine(width/mNum*i,0+mBorderWidth/2,width/mNum*i,height-mBorderWidth/2,mDividerPaint);
         }
+        //绘制内容
         if (mInputView !=null){
             if (!TextUtils.isEmpty(mInputView.getText())){
                 String text = mInputView.getText().toString();
