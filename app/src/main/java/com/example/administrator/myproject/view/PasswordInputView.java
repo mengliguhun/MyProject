@@ -33,19 +33,21 @@ import com.example.administrator.myproject.R;
  */
 public class PasswordInputView extends View {
 
-    private Paint mTextPaint;
-    private int mTextColor = Color.BLACK;
-    private Paint mBorderPaint;
-    private int mBorderColor = Color.RED;
-    private float mBorderWidth = 2;
-    private Paint mDividerPaint;
-    private float mDividerHeight = 2;
-    private int mDividerColor = Color.WHITE;
-    private float mBorderRadius = 45;
+    private Paint mTextPaint;//绘制Text输入内容的画笔
+    private int mTextColor = Color.BLACK;//字体颜色
+    private Paint mBorderPaint;//边框背景颜色
+    private int mBorderColor = Color.BLUE;
+    private float mBorderWidth = 2;//边框大小
+    private int mBackgroundColor = Color.WHITE;//背景色
+    private Paint mDividerPaint;//分割线
+    private float mDividerWidth = 2;//分割线宽度
+    private int mDividerColor = Color.BLUE;//分割线颜色
+    private float mBorderRadius = 45;//绘制圆角角度
     private float mTextWidth;
     private float mTextHeight;
     private float mTextSize = 16;
-    private int mNum = 4;
+    private int mNum = 4;//输入内容长度
+
 
     private EditText mInputView;
     public EditText getInputView() {
@@ -120,6 +122,15 @@ public class PasswordInputView extends View {
         invalidate();
     }
 
+    public void setBackgroundColor(int mBackgroundColor) {
+        this.mBackgroundColor = mBackgroundColor;
+        invalidate();
+    }
+
+    public int getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
     public int getBorderColor() {
         return mBorderColor;
     }
@@ -139,12 +150,12 @@ public class PasswordInputView extends View {
         invalidate();
     }
 
-    public float getDividerHeight() {
-        return mDividerHeight;
+    public float getDividerWidth() {
+        return mDividerWidth;
     }
 
-    public void setDividerHeight(float mDividerHeight) {
-        this.mDividerHeight = mDividerHeight;
+    public void setDividerWidth(float mDividerWidth) {
+        this.mDividerWidth = mDividerWidth;
         invalidate();
     }
 
@@ -189,14 +200,17 @@ public class PasswordInputView extends View {
         mBorderColor = a.getColor(
                 R.styleable.PasswordInputView_borderColor,
                 mBorderColor);
+        mBackgroundColor = a.getColor(
+                R.styleable.PasswordInputView_backGroundColor,
+                mBackgroundColor);
         mDividerColor = a.getColor(
                 R.styleable.PasswordInputView_borderColor,
                 mDividerColor);
         // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
         // values that should fall on pixel boundaries.
-        mDividerHeight = a.getDimension(
-                R.styleable.PasswordInputView_dividerHeight,
-                mDividerHeight);
+        mDividerWidth = a.getDimension(
+                R.styleable.PasswordInputView_dividerW,
+                mDividerWidth);
         mBorderWidth = a.getDimension(
                 R.styleable.PasswordInputView_borderW,
                 mBorderWidth);
@@ -222,17 +236,23 @@ public class PasswordInputView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
 
-        //外边框
         RectF rect = new RectF(0,0,width,height);
+        //背景
+        mBorderPaint.setColor(mBackgroundColor);
+        canvas.drawRoundRect(rect, mBorderRadius, mBorderRadius, mBorderPaint);
+        //外边框
         mBorderPaint.setStrokeWidth(mBorderWidth);
+        mBorderPaint.setColor(mBorderColor);
+        mBorderPaint.setStyle(Paint.Style.STROKE);
         canvas.drawRoundRect(rect,mBorderRadius,mBorderRadius,mBorderPaint);
+
         // 分割线
+        mDividerPaint.setStrokeWidth(mDividerWidth);
         for (int i = 1; i < mNum; i++) {
-            canvas.drawLine(width/mNum*i,0+mBorderWidth,width/mNum*i+mDividerHeight-mBorderWidth,height,mDividerPaint);
+            canvas.drawLine(width/mNum*i,0+mBorderWidth/2,width/mNum*i,height-mBorderWidth/2,mDividerPaint);
         }
         if (mInputView !=null){
             if (!TextUtils.isEmpty(mInputView.getText())){

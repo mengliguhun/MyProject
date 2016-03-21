@@ -11,17 +11,20 @@
     <com.example.administrator.myproject.view.CoustomView
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:visibility="gone"
         />
     <FrameLayout
         android:layout_width="244dp"
         android:layout_height="45dp"
-        android:layout_centerVertical="true">
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true">
         <EditText
             android:id="@+id/edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
             android:cursorVisible="false"
+            android:textColor="@android:color/transparent"
             android:inputType="number"/>
         <com.example.administrator.myproject.view.PasswordInputView
             android:id="@+id/text"

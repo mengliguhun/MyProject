@@ -20,6 +20,8 @@ public class CustomViewsActivity extends BaseActivity {
         mInputView = (EditText) findViewById(R.id.edit);
         mCodeView = (PasswordInputView) findViewById(R.id.text);
         mCodeView.setInputView(mInputView);
+        mCodeView.setBorderRadius(20);
+//        mCodeView.setBorderWidth(40);
 
 
 
