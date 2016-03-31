@@ -8,10 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -23,6 +25,7 @@ import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httputils.HttpUtils;
 import com.example.administrator.myproject.utils.GraphicUtils;
 import com.example.administrator.myproject.utils.ImageLoaderUtil;
+import com.example.administrator.myproject.view.BezierView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yqritc.scalablevideoview.ScalableType;
 import com.yqritc.scalablevideoview.ScalableVideoView;
@@ -41,6 +44,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context context;
     private LayoutInflater layoutInflater;
     private DisplayMetrics displayMetrics;
+
+    private ViewGroup mParent;
+    BezierView bezierView;
     public RecyclerViewAdapter(Context context,List<FunnyListResult.ItemsEntity> objects) {
         this.objects = objects;
         this.context = context;
@@ -49,7 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+        mParent = parent;
         return new ViewHolder(layoutInflater,parent);
     }
 
@@ -68,6 +74,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private ImageView image;
         private ScalableVideoView textureView;
         private ProgressBar progressBar;
+
+        private Button test;
+
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             this(inflater.inflate(R.layout.listview_item, parent, false));
         }
@@ -79,6 +88,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             textureView = (ScalableVideoView) view.findViewById(R.id.video);
             progressBar = (ProgressBar) view.findViewById(R.id.progressbar);
             view.setOnClickListener(this);
+
+            test = (Button) view.findViewById(R.id.test);
+
         }
 
         public TextView getText() {
@@ -94,6 +106,34 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //TODO implement
         final FunnyListResult.ItemsEntity entity = (FunnyListResult.ItemsEntity) object;
         holder.text.setText(entity.getContent());
+        holder.test.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        bezierView = new BezierView(context);
+
+                        if (mParent != null){
+                            mParent.requestDisallowInterceptTouchEvent(true);
+                        }
+                        bezierView.dragStart(holder.test,event.getRawX(),event.getRawY());
+
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        bezierView.updatePoints(event.getRawX(),event.getRawY());
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        if (mParent != null){
+                            mParent.requestDisallowInterceptTouchEvent(false);
+                        }
+                        bezierView.dragFinish();
+                        break;
+                }
+                return true;
+            }
+        });
         if (!TextUtils.isEmpty(entity.getImage())){
             holder.image.setVisibility(View.VISIBLE);
             holder.textureView.setVisibility(View.GONE);
@@ -139,10 +179,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             }
                         });
                     }
-
-
                 }
-
                 holder.textureView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -153,8 +190,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                     holder.textureView.start();
                                 }
                             }
-
-
                     }
                 });
             } catch (IOException e) {

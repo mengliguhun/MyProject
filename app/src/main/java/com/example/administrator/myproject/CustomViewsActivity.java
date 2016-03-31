@@ -1,13 +1,17 @@
 package com.example.administrator.myproject;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.administrator.myproject.utils.SortUtil;
+import com.example.administrator.myproject.view.BezierView;
 import com.example.administrator.myproject.view.PasswordInputView;
 
 public class CustomViewsActivity extends BaseActivity {
@@ -21,7 +25,6 @@ public class CustomViewsActivity extends BaseActivity {
         mCodeView = (PasswordInputView) findViewById(R.id.text);
         mCodeView.setInputView(mInputView);
         mCodeView.setBorderRadius(20);
-
 
 
         int[] a={49,38,65,97,76,13,27,49,78,34,12,64,1,8};
@@ -45,4 +48,14 @@ public class CustomViewsActivity extends BaseActivity {
         a[low] = temp;
         return low;
     }
+    private void windowManagerAddView(Context context,View view){
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        params.height = 80;
+        params.width = 80;
+        params.format = PixelFormat.TRANSLUCENT;
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//后面窗口仍然可以处理点设备事件
+        WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.addView(view, params);
+    }
+
 }

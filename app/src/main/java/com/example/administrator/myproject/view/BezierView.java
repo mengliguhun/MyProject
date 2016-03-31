@@ -6,15 +6,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -33,15 +36,9 @@ public class BezierView extends View {
     private float diffRadius = 2;
     private float startRadius;
     private float endRadius;
-    private boolean isTouch;
-
     //起始圆心 在屏幕中的坐标起点
     private float startCircleX;
     private float startCircleY;
-
-    //触摸点 相对view
-    private float circleX;
-    private float circleY;
     //触摸点 相对view
     private float touchX;
     private float touchY;
@@ -49,12 +46,8 @@ public class BezierView extends View {
     private float centerX;
     private float centerY;
 
-    private boolean isFirst = true;
-    private int originWidth;
-    private int originHeight;
-    private float marginLeft,marginTop;
-    private RelativeLayout.LayoutParams originParams;
-    private RelativeLayout.LayoutParams newParams;
+    private int targetWidth;
+    private int targetHeight;
 
     public BezierView(Context context) {
         super(context);
@@ -79,106 +72,46 @@ public class BezierView extends View {
 
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (isFirst && w > 0 && h > 0){
-            isFirst = false;
-            originWidth = w;
-            originHeight = h;
+    public void  initPoints(float startX,float startY,float x,float y,int width,int height){
 
-            endRadius = Math.min(w,h)/2;
-            startRadius = endRadius-diffRadius;
+        endRadius = Math.min(width,height)/2;
+        startRadius = endRadius-diffRadius;
+        startCircleX = startX + width/2;
+        startCircleY = startY + height/2 - getStatusBarHeight();
+        touchX = startCircleX;
+        touchY = startCircleY;
 
-            // 屏幕坐标系和view内坐标系不是同一个。
-            //view在屏幕中的坐标起点
-            int[] location = new int[2];
-            getLocationOnScreen(location);
-            int x = location[0];
-            int y = location[1] - GraphicUtils.dip2px(getContext(),25);// 状态栏高度
+        centerX = startCircleX/2 +touchX/2;
+        centerY = startCircleY/2 +touchY/2;
 
-            startCircleX = x+originWidth/2;
-            startCircleY = y+originHeight/2;
-
-            circleX = originWidth/2;
-            circleY = originHeight/2;
-
-            ViewGroup.LayoutParams params = getLayoutParams();
-            if (params instanceof RelativeLayout.LayoutParams){
-                originParams = (RelativeLayout.LayoutParams) params;
-            }
-        }
+        invalidate();
     }
+    public void updatePoints(float x,float y){
+        touchX = x;
+        touchY = y - getStatusBarHeight();
+        centerX = startCircleX/2 +touchX/2;
+        centerY = startCircleY/2 +touchY/2;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-
-            RectF rectF= new RectF();
-            rectF.top = circleY -endRadius;
-            rectF.bottom = circleY + endRadius;
-            rectF.left = circleX - endRadius;
-            rectF.right = circleX +endRadius;
-            if (rectF.contains(event.getX(),event.getY())){
-                isTouch = true;
-            }
-
-            ViewGroup layout = (ViewGroup) this.getParent();
-
-            marginLeft = event.getRawX() - event.getX() -getLeft()+layout.getPaddingLeft();
-            marginTop = event.getRawY() - event.getY() - getTop() + layout.getPaddingTop() - GraphicUtils.dip2px(getContext(),25);
-
-            setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-            circleX = startCircleX - marginLeft;
-            circleY = startCircleY - marginTop;
-
-            touchX = circleX;
-            touchY = circleY;
-
-        }
-
-        if (event.getAction() == MotionEvent.ACTION_MOVE){
-
-            touchX = event.getX();
-            touchY = event.getY();
-
-            centerX = (touchX+circleX)/2;
-            centerY = (touchY+circleY)/2;
-
-
-
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP ||event.getAction() == MotionEvent.ACTION_CANCEL){
-            isTouch = false;
-            setLayoutParams(originParams);
-            startRadius = endRadius-diffRadius;
-            circleX= originWidth /2;
-            circleY = originHeight /2;
-
-        }
-
-        postInvalidate();
-        return true;
+        invalidate();
     }
+    public void dragStart(View target,float x,float y){
+        final int[] locations = new int[2];
+        target.getLocationOnScreen(locations);
 
+        windowManagerAddView(getContext(),this);
+        this.initPoints(locations[0],locations[1],x,y,target.getWidth(),target.getHeight());
+
+    }
+    public void dragFinish(){
+        windowManagerRemoveView();
+    }
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if (!isTouch){
-            startRadius = endRadius -diffRadius;
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.OVERLAY);
-            canvas.drawCircle(circleX,circleY,startRadius,mPaint);
-        }
-        else {
-
-            calculate();
-            canvas.drawCircle(circleX,circleY,startRadius,mPaint);
-            canvas.drawCircle(touchX,touchY,endRadius,mPaint);
-            canvas.drawPath(mPath,mPaint);
-
-        }
+        calculate();
+        canvas.drawCircle(startCircleX,startCircleY,startRadius,mPaint);
+        canvas.drawCircle(touchX,touchY,endRadius,mPaint);
+        canvas.drawPath(mPath,mPaint);
 
     }
 
@@ -189,13 +122,13 @@ public class BezierView extends View {
             startRadius = 5;
         }
         //根据两个圆心算出三角函数角度
-        double angle = Math.atan((touchY - circleY)/(touchX - circleX));
+        double angle = Math.atan((touchY - startCircleY)/(touchX - startCircleX));
         float offsetX = (float) (startRadius*Math.sin(angle));
         float offsetY = (float) (startRadius*Math.cos(angle));
-        float x1 = circleX - offsetX;
-        float y1 = circleY + offsetY;
-        float x4 = circleX + offsetX;
-        float y4 = circleY - offsetY;
+        float x1 = startCircleX - offsetX;
+        float y1 = startCircleY + offsetY;
+        float x4 = startCircleX + offsetX;
+        float y4 = startCircleY - offsetY;
 
         offsetX = (float) (endRadius*Math.sin(angle));
         offsetY = (float) (endRadius*Math.cos(angle));
@@ -203,8 +136,6 @@ public class BezierView extends View {
         float y2 = touchY + offsetY;
         float x3 = touchX + offsetX;
         float y3 = touchY - offsetY;
-
-
 
         mPath.reset();
         mPath.moveTo(x1,y1);
@@ -214,5 +145,30 @@ public class BezierView extends View {
         mPath.lineTo(x1,y1);
 
     }
+    WindowManager windowManager;
+    private void windowManagerAddView(Context context,View view){
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
 
+        params.format = PixelFormat.TRANSLUCENT;
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//后面窗口仍然可以处理点设备事件
+        windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.addView(view, params);
+    }
+    private void windowManagerRemoveView(){
+        if (windowManager != null){
+            windowManager.removeView(this);
+        }
+    }
+    /**
+     * 获取状态栏高度
+     * @return
+     */
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 }
