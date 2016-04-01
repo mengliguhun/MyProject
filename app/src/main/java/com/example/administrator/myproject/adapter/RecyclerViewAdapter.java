@@ -117,10 +117,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         if (mParent != null){
                             mParent.requestDisallowInterceptTouchEvent(true);
                         }
+
                         bezierView.dragStart(holder.test,event.getRawX(),event.getRawY());
 
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        holder.test.setVisibility(View.INVISIBLE);
                         bezierView.updatePoints(event.getRawX(),event.getRawY());
                         break;
                     case MotionEvent.ACTION_UP:
@@ -128,6 +130,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         if (mParent != null){
                             mParent.requestDisallowInterceptTouchEvent(false);
                         }
+                        holder.test.setVisibility(View.VISIBLE);
                         bezierView.dragFinish();
                         break;
                 }

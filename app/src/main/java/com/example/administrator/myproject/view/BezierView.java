@@ -2,6 +2,7 @@ package com.example.administrator.myproject.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,11 +31,17 @@ import com.google.android.gms.analytics.ecommerce.Product;
  * TODO: document your custom view class.
  */
 public class BezierView extends View {
-
+    private OnDragFinishListener onDragFinishListener;
     private Paint mPaint;
+    //绘图路径
     private Path mPath;
+    //
+    private float maxRadius;
+    //两圆的半径差
     private float diffRadius = 2;
+    //起始圆半径
     private float startRadius;
+    //拖动圆的半径
     private float endRadius;
     //起始圆心 在屏幕中的坐标起点
     private float startCircleX;
@@ -45,9 +52,20 @@ public class BezierView extends View {
     //控制点 相对view
     private float centerX;
     private float centerY;
+    //最大距离
+    private int maxDistance = 100;
+    //是否超出最大距离
+    private boolean isArriveMaxDistance;
 
-    private int targetWidth;
-    private int targetHeight;
+    private Bitmap mDest;
+
+    public void setMaxRadius(float maxRadius) {
+        this.maxRadius = maxRadius;
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDistance = maxDistance;
+    }
 
     public BezierView(Context context) {
         super(context);
@@ -69,12 +87,24 @@ public class BezierView extends View {
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
         mPaint.setAntiAlias(true);
-
+        maxRadius = GraphicUtils.dip2px(getContext(),10);
     }
 
+    /**
+     * 用户按下并初始化
+     * @param startX
+     * @param startY
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     public void  initPoints(float startX,float startY,float x,float y,int width,int height){
 
         endRadius = Math.min(width,height)/2;
+        if (endRadius >maxRadius){
+            endRadius = maxRadius;
+        }
         startRadius = endRadius-diffRadius;
         startCircleX = startX + width/2;
         startCircleY = startY + height/2 - getStatusBarHeight();
@@ -86,6 +116,12 @@ public class BezierView extends View {
 
         invalidate();
     }
+
+    /**
+     * 用户移动view，并更新
+     * @param x
+     * @param y
+     */
     public void updatePoints(float x,float y){
         touchX = x;
         touchY = y - getStatusBarHeight();
@@ -94,57 +130,105 @@ public class BezierView extends View {
 
         invalidate();
     }
+
+    /**
+     * 开始拖动
+     * @param target
+     * @param x
+     * @param y
+     */
     public void dragStart(View target,float x,float y){
+
+        convertViewToBitmap(target);
+
         final int[] locations = new int[2];
         target.getLocationOnScreen(locations);
 
         windowManagerAddView(getContext(),this);
+
         this.initPoints(locations[0],locations[1],x,y,target.getWidth(),target.getHeight());
 
     }
+
+    /**
+     * 拖动结束
+     */
     public void dragFinish(){
+        if (onDragFinishListener != null){
+            onDragFinishListener.onDragFinish();
+        }
         windowManagerRemoveView();
+    }
+    /**
+     * 将view转换成bitmap
+     * @param view
+     * @return
+     */
+    private Bitmap convertViewToBitmap(View view) {
+        int width = view.getWidth();
+        int height = view.getHeight();
+        mDest = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
+        //定义一个指定位图的画布，来绘制内容
+        Canvas canvas = new Canvas(mDest);
+        //将view的内容绘制到bitmap上
+        view.draw(canvas);
+        return mDest;
     }
     @Override
     protected void onDraw(Canvas canvas) {
 
         calculate();
-        canvas.drawCircle(startCircleX,startCircleY,startRadius,mPaint);
-        canvas.drawCircle(touchX,touchY,endRadius,mPaint);
-        canvas.drawPath(mPath,mPaint);
+        if (!isArriveMaxDistance){
+            canvas.drawCircle(startCircleX,startCircleY,startRadius,mPaint);
+            canvas.drawCircle(touchX,touchY,endRadius,mPaint);
+            canvas.drawPath(mPath,mPaint);
+
+        }
+
+        canvas.drawBitmap(mDest,touchX - mDest.getWidth()/2f,touchY - mDest.getHeight()/2f,mPaint);
+
 
     }
 
+    /**
+     * 计算贝塞尔曲线
+     */
     private void calculate(){
         float distance = (float) Math.sqrt(Math.pow(touchX - startCircleX,2)+Math.pow(touchY - startCircleY,2));
         startRadius = -distance/15 +endRadius;
-        if (startRadius <5){
-            startRadius = 5;
+        if (startRadius <8){
+            startRadius = 8;
         }
-        //根据两个圆心算出三角函数角度
-        double angle = Math.atan((touchY - startCircleY)/(touchX - startCircleX));
-        float offsetX = (float) (startRadius*Math.sin(angle));
-        float offsetY = (float) (startRadius*Math.cos(angle));
-        float x1 = startCircleX - offsetX;
-        float y1 = startCircleY + offsetY;
-        float x4 = startCircleX + offsetX;
-        float y4 = startCircleY - offsetY;
+        if (distance > GraphicUtils.dip2px(getContext(),maxDistance)){
+            isArriveMaxDistance = true;
+        }else {
+            //根据两个圆心算出三角函数角度
+            double angle = Math.atan((touchY - startCircleY)/(touchX - startCircleX));
+            float offsetX = (float) (startRadius*Math.sin(angle));
+            float offsetY = (float) (startRadius*Math.cos(angle));
+            float x1 = startCircleX - offsetX;
+            float y1 = startCircleY + offsetY;
+            float x4 = startCircleX + offsetX;
+            float y4 = startCircleY - offsetY;
 
-        offsetX = (float) (endRadius*Math.sin(angle));
-        offsetY = (float) (endRadius*Math.cos(angle));
-        float x2 = touchX - offsetX;
-        float y2 = touchY + offsetY;
-        float x3 = touchX + offsetX;
-        float y3 = touchY - offsetY;
+            offsetX = (float) (endRadius*Math.sin(angle));
+            offsetY = (float) (endRadius*Math.cos(angle));
+            float x2 = touchX - offsetX;
+            float y2 = touchY + offsetY;
+            float x3 = touchX + offsetX;
+            float y3 = touchY - offsetY;
 
-        mPath.reset();
-        mPath.moveTo(x1,y1);
-        mPath.quadTo(centerX,centerY,x2,y2);
-        mPath.lineTo(x3,y3);
-        mPath.quadTo(centerX,centerY,x4,y4);
-        mPath.lineTo(x1,y1);
+            mPath.reset();
+            mPath.moveTo(x1,y1);
+            mPath.quadTo(centerX,centerY,x2,y2);
+            mPath.lineTo(x3,y3);
+            mPath.quadTo(centerX,centerY,x4,y4);
+            mPath.lineTo(x1,y1);
+        }
+
 
     }
+    //向窗口添加view
     WindowManager windowManager;
     private void windowManagerAddView(Context context,View view){
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -154,6 +238,7 @@ public class BezierView extends View {
         windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         windowManager.addView(view, params);
     }
+    //移除view
     private void windowManagerRemoveView(){
         if (windowManager != null){
             windowManager.removeView(this);
@@ -170,5 +255,21 @@ public class BezierView extends View {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 拖动抬起监听
+     * @param onDragFinishListener
+     */
+
+    public void setOnDragFinishListener(OnDragFinishListener onDragFinishListener) {
+        this.onDragFinishListener = onDragFinishListener;
+    }
+
+    /**
+     * 自定义监听器
+     */
+    public interface OnDragFinishListener{
+         void onDragFinish();
     }
 }
