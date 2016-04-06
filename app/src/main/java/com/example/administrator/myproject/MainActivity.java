@@ -1,5 +1,7 @@
 package com.example.administrator.myproject;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -91,6 +93,7 @@ public class MainActivity extends BaseActivity
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
         tabLayout.setSelectedTabIndicatorHeight(0);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+
     }
 
     @Override

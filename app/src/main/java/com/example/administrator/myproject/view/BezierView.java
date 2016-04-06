@@ -1,5 +1,9 @@
 package com.example.administrator.myproject.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -8,7 +12,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -19,10 +22,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.example.administrator.myproject.R;
+import com.example.administrator.myproject.animation.PointEvaluator;
+import com.example.administrator.myproject.bean.Point;
 import com.example.administrator.myproject.utils.GraphicUtils;
 import com.example.administrator.myproject.utils.Utils;
 import com.google.android.gms.analytics.ecommerce.Product;
@@ -157,7 +163,13 @@ public class BezierView extends View {
         if (onDragFinishListener != null){
             onDragFinishListener.onDragFinish();
         }
-        windowManagerRemoveView();
+        if (isArriveMaxDistance){
+            windowManagerRemoveView();
+        }
+        else {
+            startRollBackAnimation(1000);
+        }
+
     }
     /**
      * 将view转换成bitmap
@@ -174,6 +186,36 @@ public class BezierView extends View {
         view.draw(canvas);
         return mDest;
     }
+    /**
+     * 回滚状态动画
+     */
+    private void startRollBackAnimation(long duration) {
+        ValueAnimator rollBackAnim = ObjectAnimator.ofObject(new PointEvaluator(duration),new Point(touchX,touchY),new Point(startCircleX,startCircleY));
+        rollBackAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Point point = (Point) animation.getAnimatedValue();
+                touchX = point.getX();
+                touchY = point.getY();
+                centerX = startCircleX/2 +touchX/2;
+                centerY = startCircleY/2 +touchY/2;
+                postInvalidate();
+            }
+        });
+        rollBackAnim.setInterpolator(new BounceInterpolator()); // 反弹效果
+        rollBackAnim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                BezierView.this.clearAnimation();
+
+                windowManagerRemoveView();
+            }
+        });
+        rollBackAnim.setDuration(duration);
+        rollBackAnim.start();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
 
