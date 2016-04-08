@@ -44,9 +44,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context context;
     private LayoutInflater layoutInflater;
     private DisplayMetrics displayMetrics;
-
-    private ViewGroup mParent;
-    BezierView bezierView;
     public RecyclerViewAdapter(Context context,List<FunnyListResult.ItemsEntity> objects) {
         this.objects = objects;
         this.context = context;
@@ -55,7 +52,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        mParent = parent;
         return new ViewHolder(layoutInflater,parent);
     }
 
@@ -74,9 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private ImageView image;
         private ScalableVideoView textureView;
         private ProgressBar progressBar;
-
-        private Button test;
-
+        private ImageView play;
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             this(inflater.inflate(R.layout.listview_item, parent, false));
         }
@@ -87,9 +81,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             image = (ImageView) view.findViewById(R.id.image);
             textureView = (ScalableVideoView) view.findViewById(R.id.video);
             progressBar = (ProgressBar) view.findViewById(R.id.progressbar);
+            play = (ImageView) view.findViewById(R.id.play);
             view.setOnClickListener(this);
 
-            test = (Button) view.findViewById(R.id.test);
 
         }
 
@@ -106,37 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //TODO implement
         final FunnyListResult.ItemsEntity entity = (FunnyListResult.ItemsEntity) object;
         holder.text.setText(entity.getContent());
-        holder.test.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        bezierView = new BezierView(context);
-
-                        if (mParent != null){
-                            mParent.requestDisallowInterceptTouchEvent(true);
-                        }
-
-                        bezierView.dragStart(holder.test,event.getRawX(),event.getRawY());
-
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        holder.test.setVisibility(View.INVISIBLE);
-                        bezierView.updatePoints(event.getRawX(),event.getRawY());
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        if (mParent != null){
-                            mParent.requestDisallowInterceptTouchEvent(false);
-                        }
-                        holder.test.setVisibility(View.VISIBLE);
-                        bezierView.dragFinish();
-                        break;
-                }
-                return true;
-            }
-        });
         if (!TextUtils.isEmpty(entity.getImage())){
             holder.image.setVisibility(View.VISIBLE);
             holder.textureView.setVisibility(View.GONE);
@@ -151,6 +115,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         else if (!TextUtils.isEmpty(entity.getPic_url())){
             holder.image.setVisibility(View.VISIBLE);
             holder.textureView.setVisibility(View.VISIBLE);
+            holder.progressBar.setVisibility(View.GONE);
+            holder.play.setVisibility(View.VISIBLE);
+
             int width = displayMetrics.widthPixels-GraphicUtils.dip2px(context,20);
             int height = width *entity.getPic_size().get(1)/entity.getPic_size().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
@@ -167,21 +134,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         holder.textureView.stop();
                     }
                     holder.progressBar.setVisibility(View.GONE);
+                    holder.play.setVisibility(View.VISIBLE);
                 }
                 else {
-                    if (!holder.textureView.isPlaying()) {
-                        holder.progressBar.setVisibility(View.VISIBLE);
-                        holder.textureView.prepareAsync(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                if (entity.isVisible()){
-                                    holder.progressBar.setVisibility(View.GONE);
-                                    holder.textureView.start();
-                                }
 
-                            }
-                        });
+                    if (!holder.textureView.isPlaying()) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.play.setVisibility(View.VISIBLE);
                     }
+                    else {
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.play.setVisibility(View.GONE);
+                    }
+
                 }
                 holder.textureView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -189,10 +154,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             if (entity.isVisible()){
                                 if (holder.textureView.isPlaying()){
                                     holder.textureView.pause();
-                                }else {
-                                    holder.textureView.start();
+                                    holder.play.setVisibility(View.VISIBLE);
                                 }
                             }
+                    }
+                });
+                holder.play.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        holder.play.setVisibility(View.GONE);
+
+                        if (!holder.textureView.isPlaying()) {
+                            holder.progressBar.setVisibility(View.VISIBLE);
+                            holder.textureView.prepareAsync(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    if (entity.isVisible()){
+                                        holder.progressBar.setVisibility(View.GONE);
+                                        holder.textureView.start();
+                                    }
+
+                                }
+                            });
+                        }
                     }
                 });
             } catch (IOException e) {

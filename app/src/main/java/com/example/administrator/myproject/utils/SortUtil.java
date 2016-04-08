@@ -48,4 +48,20 @@ public class SortUtil {
         return array;
     }
 
+    private static int getMiddle(int[] a, int low, int high) {
+        int temp = a[low];//基准元素
+        while(low<high){
+            //找到比基准元素小的元素位置
+            while(low<high && a[high]>=temp){
+                high--;
+            }
+            a[low] = a[high];
+            while(low<high && a[low]<=temp){
+                low++;
+            }
+            a[high] = a[low];
+        }
+        a[low] = temp;
+        return low;
+    }
 }

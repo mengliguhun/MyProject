@@ -6,25 +6,16 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.administrator.myproject.R;
 
@@ -46,10 +37,10 @@ public class PasswordInputView extends View {
     private float mTextWidth;
     private float mTextHeight;
     private float mTextSize = 16;
+    private boolean isPassword;
     private int mNum = 4;//输入内容长度
-
-
     private EditText mInputView;//设置EditText用于获取焦点弹出键盘
+
     public EditText getInputView() {
         return mInputView;
     }
@@ -190,6 +181,15 @@ public class PasswordInputView extends View {
         invalidate();
     }
 
+    public void setPassword(boolean password) {
+        isPassword = password;
+        invalidate();
+    }
+
+    public boolean isPassword() {
+        return isPassword;
+    }
+
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
@@ -217,6 +217,12 @@ public class PasswordInputView extends View {
         mBorderRadius= a.getDimension(
                 R.styleable.PasswordInputView_borderRadius,
                 mBorderRadius);
+
+        mTextSize= a.getDimension(
+                R.styleable.PasswordInputView_textSize,
+                mTextSize);
+
+        isPassword = a.getBoolean(R.styleable.PasswordInputView_password,isPassword);
 
         a.recycle();
 
@@ -264,10 +270,16 @@ public class PasswordInputView extends View {
                     mTextWidth = mTextPaint.measureText(s);
                     Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
                     mTextHeight = fontMetrics.bottom;
-                    canvas.drawText(s,
-                            width/mNum*i+width/mNum/2-mTextWidth/2,
-                            height/ 2 +mTextHeight,
-                            mTextPaint);
+                    if (isPassword){
+                        canvas.drawCircle(width/mNum*i+width/mNum/2,height/ 2,mTextSize/2,mTextPaint);
+                    }
+                    else {
+                        canvas.drawText(s,
+                                width/mNum*i+width/mNum/2-mTextWidth/2,
+                                height/ 2 +mTextHeight,
+                                mTextPaint);
+                    }
+
                 }
 
             }
@@ -275,7 +287,12 @@ public class PasswordInputView extends View {
 
     }
 
-    private void setTextSize(float size) {
+    /**
+     * TypedValue.COMPLEX_UNIT_SP
+     * @param size
+     */
+    public void setTextSize(float size) {
+
         Context c = getContext();
         Resources r;
 
@@ -285,6 +302,7 @@ public class PasswordInputView extends View {
             r = c.getResources();
 
         if (size != mTextPaint.getTextSize()) {
+            mTextSize = size;
             mTextPaint.setTextSize(TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_SP, size, r.getDisplayMetrics()));
             requestLayout();
