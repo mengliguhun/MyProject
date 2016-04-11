@@ -153,7 +153,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     public void onClick(View v) {
                             if (entity.isVisible()){
                                 if (holder.textureView.isPlaying()){
-                                    holder.textureView.pause();
+                                    holder.textureView.stop();
                                     holder.play.setVisibility(View.VISIBLE);
                                 }
                             }
@@ -177,6 +177,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                 }
                             });
                         }
+
+
+
                     }
                 });
             } catch (IOException e) {

@@ -34,6 +34,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,30 +57,7 @@ public class MainActivity extends BaseActivity
         initViews();
         bindViews();
         initData();
-//        //创建okHttpClient对象
-//        OkHttpClient mOkHttpClient = new OkHttpClient();
-////创建一个Request
-//        final Request request = new Request.Builder()
-//                .url("http://m2.qiushibaike.com/article/list/text?page=1&count=30")
-//                .build();
-////new call
-//        Call call = mOkHttpClient.newCall(request);
-////请求加入调度
-//        call.enqueue(new Callback()
-//        {
-//            @Override
-//            public void onFailure(Request request, IOException e) {
-//                String htmlStr =  "";
-//            }
-//            @Override
-//            public void onResponse(final Response response) throws IOException
-//            {
-//                String htmlStr =  response.body().string();
-//                response.body().string();
-//            }
-//        });
     }
-
     @Override
     public void initViews() {
         super.initViews();

@@ -181,7 +181,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                     if (firstVisibleItem >=0 ){
                         if (currentPos != firstVisibleItem){
                             currentPos = firstVisibleItem;
-                            updateVideoItem(currentPos,false);
+                            updateVideoItem(currentPos,fragmentVisible);
                         }
                     }
                     Log.e("firstVisibleItem",firstVisibleItem+"");

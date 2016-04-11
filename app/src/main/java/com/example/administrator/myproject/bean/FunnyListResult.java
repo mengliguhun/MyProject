@@ -83,6 +83,7 @@ public class FunnyListResult {
 
     public static class ItemsEntity {
         private boolean isVisible;
+        private boolean isPause;
         private String format;
         private String image;
         private int published_at;
@@ -285,6 +286,13 @@ public class FunnyListResult {
             this.isVisible = isVisible;
         }
 
+        public void setPause(boolean pause) {
+            isPause = pause;
+        }
+
+        public boolean isPause() {
+            return isPause;
+        }
 
         public static class UserEntity {
             private int avatar_updated_at;
