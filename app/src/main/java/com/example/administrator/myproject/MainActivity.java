@@ -1,41 +1,26 @@
 package com.example.administrator.myproject;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.example.administrator.myproject.adapter.MyFragmentStateViewPagerAdapter;
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
-import com.example.administrator.myproject.fragment.IndexPage;
-import com.example.administrator.myproject.view.PagerSlidingTabStrip;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +126,7 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_camara) {
             startActivity(new Intent(this,CustomViewsActivity.class));
         } else if (id == R.id.nav_gallery) {
-
+            startActivity(new Intent(this,SpeexRecorderActivity.class));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

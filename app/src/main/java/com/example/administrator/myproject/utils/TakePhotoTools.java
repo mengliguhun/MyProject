@@ -1,13 +1,4 @@
 package com.example.administrator.myproject.utils;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +13,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /*
  * 照片处理工具类
@@ -128,7 +128,7 @@ public class TakePhotoTools {
 	 */
 	private static String getFileName() {
 
-		String saveDir = Environment.getExternalStorageDirectory() + "/qiuying/images";
+		String saveDir = Environment.getExternalStorageDirectory() + "/cache/images";
 		File file = new File(saveDir);
 		if (!file.exists()) {
 			file.mkdirs();// 创建文件夹
@@ -397,7 +397,7 @@ public class TakePhotoTools {
 	/**
 	 * 显示Toast
 	 * 
-	 * @param content
+	 * @param
 	 */
 	public static void showToast(Context mContext, String showText) {
 		Toast.makeText(mContext, showText, Toast.LENGTH_SHORT).show();

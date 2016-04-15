@@ -295,6 +295,9 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         else if(mParam1.equals("2")){
             HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
+        else {
+            HttpUtils.getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
+        }
     }
 
     /**
