@@ -213,7 +213,7 @@ public class SDUtil {
 		String saveDir = Environment.getExternalStorageDirectory() +File.separator + path;
 		File file = new File(saveDir);
 		if (!file.exists()) {
-			file.mkdirs();// 创建文件夹
+			file.mkdirs();// 创建文件
 		}
 		// 用日期作为文件名，确保唯一性
 		if (TextUtils.isEmpty(name)){

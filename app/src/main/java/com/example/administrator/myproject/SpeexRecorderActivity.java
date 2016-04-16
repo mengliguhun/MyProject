@@ -60,24 +60,29 @@ public class SpeexRecorderActivity extends BaseActivity implements OnClickListen
         switch (v.getId()){
             case R.id.recorder:
                 if (status == STOPPED) {
-                    this.setTitle("开始录音了！");
-                    fileName = SDUtil.getFileName(".spx",null,null);
+                    mRecorder.setText("录音中...");
+                    fileName = SDUtil.getFileName(".spx","cache","test");
                     startRecorder(fileName);
+                    mPlay.setEnabled(false);
                 } else if (status == RECORDING) {
-                    this.setTitle("停止了");
+                    mRecorder.setText("录音");
                     stopRecorder();
+                    mPlay.setEnabled(true);
                 }
                 break;
             case R.id.play:
                 // play here........
-                this.setTitle("开始播放");
-                if (TextUtils.isEmpty(fileName)){
 
+                if (TextUtils.isEmpty(fileName)){
+                    mPlay.setText("播放");
                     return;
                 }
                 if (status == PLAYING){
                     stopPlay();
+                    mPlay.setText("播放");
                 }else {
+                    mPlay.setText("播放中...");
+                    fileName = SDUtil.getFileName(".spx","cache","test");
                     startPlay(fileName);
                 }
 
