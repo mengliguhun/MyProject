@@ -57,7 +57,7 @@ public class CustomViewsActivity extends BaseActivity {
                             mParent.requestDisallowInterceptTouchEvent(true);
                         }
 
-                        mBezierView.dragStart(mBezierViewTest,event.getRawX(),event.getRawY());
+                        mBezierView.dragStart(mBezierViewTest);
 
                         break;
                     case MotionEvent.ACTION_MOVE:

@@ -5,30 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.administrator.myproject.R;
-import com.example.administrator.myproject.adapter.ListViewAdapter;
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
-import com.example.administrator.myproject.adapter.RecyclerViewAdapter;
-import com.example.administrator.myproject.bean.FunnyListResult;
-import com.example.administrator.myproject.httputils.HttpUtils;
-import com.example.administrator.myproject.view.DividerItemDecoration;
-import com.example.administrator.myproject.view.HaloToast;
-import com.example.administrator.myproject.view.PagerSlidingTabStrip;
+import com.example.administrator.myproject.view.PagerSlidingTabStripTitleColorChange;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +58,7 @@ public class IndexPage extends BaseFragment {
         return fragment;
     }
 
-    private PagerSlidingTabStrip tabs;
+    private PagerSlidingTabStripTitleColorChange tabs;
     private ViewPager viewPager;
     private MyFragmentViewPagerAdapter adapter;
     private List<String> titles = new ArrayList<>();
@@ -109,7 +95,7 @@ public class IndexPage extends BaseFragment {
     }
 
     protected void initViews() {
-        tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
+        tabs = (PagerSlidingTabStripTitleColorChange) rootView.findViewById(R.id.tabs);
         tabs.setIndicatorHeight(4);
         tabs.setIndicatorColor(getResources().getColor(R.color.green_light));
         tabs.setTextColor(getResources().getColor(R.color.text_color_gray));

@@ -6,6 +6,7 @@ import com.example.administrator.myproject.bean.Point;
 
 /**
  * Created by Administrator on 2016/4/6.
+ * 缓动函数
  */
 public class PointEvaluator implements TypeEvaluator {
     private float mDuration;

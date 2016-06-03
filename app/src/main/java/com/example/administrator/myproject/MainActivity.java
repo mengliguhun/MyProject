@@ -3,11 +3,13 @@ package com.example.administrator.myproject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
+import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +79,6 @@ public class MainActivity extends BaseActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-
-
     }
 
     @Override
@@ -89,15 +90,41 @@ public class MainActivity extends BaseActivity
 
         adapter = new MyFragmentViewPagerAdapter(getSupportFragmentManager(),titles);
         viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(1);//解决默认0不选中
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab = tabLayout.getTabAt(i);
+
+//        tabLayout.setupWithViewPager(viewPager);
+//        viewPager.setCurrentItem(1);//解决默认0不选中
+//        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+//
+//            TabLayout.Tab tab = tabLayout.getTabAt(i);
+//            if (tab != null) {
+//                tab.setCustomView(getTabView(i));
+//            }
+//        }
+//        viewPager.setCurrentItem(0);
+
+        setupWithViewPager(viewPager,tabLayout);
+
+    }
+    //解决默认0不选中
+    public void setupWithViewPager(@NonNull ViewPager viewPager,TabLayout tabLayout) {
+        final PagerAdapter adapter = viewPager.getAdapter();
+        if (adapter == null) {
+            throw new IllegalArgumentException("ViewPager does not have a PagerAdapter set");
+        }
+        // First we'll add Tabs, using the adapter's page titles
+        for (int i = 0; i < adapter.getCount(); i++) {
+            TabLayout.Tab tab = tabLayout.newTab();
             if (tab != null) {
                 tab.setCustomView(getTabView(i));
             }
+            tabLayout.addTab(tab);
         }
-        viewPager.setCurrentItem(0);
+
+        // Now we'll add our page change listener to the ViewPager
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        // Now we'll add a tab selected listener to set ViewPager's current item
+        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
     }
     public View getTabView(int position) {
@@ -128,7 +155,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_gallery) {
             startActivity(new Intent(this,SpeexRecorderActivity.class));
         } else if (id == R.id.nav_slideshow) {
-
+            startActivity(new Intent(this,CaptureActivity.class));
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

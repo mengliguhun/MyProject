@@ -5,33 +5,19 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.BounceInterpolator;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
-import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.animation.PointEvaluator;
 import com.example.administrator.myproject.bean.Point;
 import com.example.administrator.myproject.utils.GraphicUtils;
-import com.example.administrator.myproject.utils.Utils;
-import com.google.android.gms.analytics.ecommerce.Product;
 
 /**
  * TODO: document your custom view class.
@@ -100,12 +86,10 @@ public class BezierView extends View {
      * 用户按下并初始化
      * @param startX
      * @param startY
-     * @param x
-     * @param y
      * @param width
      * @param height
      */
-    public void  initPoints(float startX,float startY,float x,float y,int width,int height){
+    public void  initPoints(float startX,float startY,int width,int height){
 
         endRadius = Math.min(width,height)/2;
         if (endRadius >maxRadius){
@@ -122,7 +106,22 @@ public class BezierView extends View {
 
         invalidate();
     }
+    /**
+     * 开始拖动
+     * @param target
+     */
+    public void dragStart(View target){
 
+        convertViewToBitmap(target);
+
+        final int[] locations = new int[2];
+        target.getLocationOnScreen(locations);
+
+        windowManagerAddView(getContext(),this);
+
+        this.initPoints(locations[0],locations[1],target.getWidth(),target.getHeight());
+
+    }
     /**
      * 用户移动view，并更新
      * @param x
@@ -135,25 +134,6 @@ public class BezierView extends View {
         centerY = startCircleY/2 +touchY/2;
 
         invalidate();
-    }
-
-    /**
-     * 开始拖动
-     * @param target
-     * @param x
-     * @param y
-     */
-    public void dragStart(View target,float x,float y){
-
-        convertViewToBitmap(target);
-
-        final int[] locations = new int[2];
-        target.getLocationOnScreen(locations);
-
-        windowManagerAddView(getContext(),this);
-
-        this.initPoints(locations[0],locations[1],x,y,target.getWidth(),target.getHeight());
-
     }
 
     /**
@@ -190,6 +170,7 @@ public class BezierView extends View {
      * 回滚状态动画
      */
     private void startRollBackAnimation(long duration) {
+        //属性动画弹性效果 缓动函数
         ValueAnimator rollBackAnim = ObjectAnimator.ofObject(new PointEvaluator(duration),new Point(touchX,touchY),new Point(startCircleX,startCircleY));
         rollBackAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -202,13 +183,13 @@ public class BezierView extends View {
                 postInvalidate();
             }
         });
-        rollBackAnim.setInterpolator(new BounceInterpolator()); // 反弹效果
+
         rollBackAnim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
+                //可以自己定义监听，进行目标view的处理
                 BezierView.this.clearAnimation();
-
                 windowManagerRemoveView();
             }
         });
@@ -270,10 +251,12 @@ public class BezierView extends View {
 
 
     }
-    //向窗口添加view
+    /**
+     * 向窗口添加view
+     */
     WindowManager windowManager;
     private void windowManagerAddView(Context context,View view){
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();//全屏MATCH_PARENT
 
         params.format = PixelFormat.TRANSLUCENT;
         params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//后面窗口仍然可以处理点设备事件
