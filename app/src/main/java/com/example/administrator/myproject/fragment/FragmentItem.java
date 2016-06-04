@@ -3,23 +3,22 @@ package com.example.administrator.myproject.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.administrator.myproject.R;
-import com.example.administrator.myproject.adapter.ListViewAdapter;
 import com.example.administrator.myproject.adapter.RecyclerViewAdapter;
 import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httputils.HttpUtils;
 import com.example.administrator.myproject.view.DividerItemDecoration;
 import com.example.administrator.myproject.view.HaloToast;
+import com.example.administrator.myproject.view.RFRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     private int currentPos=-1;
     private boolean isLoadingMore;
     private boolean isLoadingMoreAll = false;
-    private RecyclerView recyclerView;
+    private RFRecyclerView recyclerView;
     private DividerItemDecoration dividerItemDecoration;
     private LinearLayoutManager linearLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -97,7 +96,8 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                         list.addAll(response.body().getItems());
                     }
                 }
-                recyclerViewAdapter.notifyDataSetChanged();
+
+                recyclerView.notifyDataSetChanged();
 
 
                 if (isLoadingMore){
@@ -147,7 +147,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     protected void initViews() {
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView = (RFRecyclerView) rootView.findViewById(R.id.recyclerView);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
     }
 
@@ -159,11 +159,13 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
 
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
         linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.activity_custom_views,null));
         recyclerView.setHasFixedSize(true);
         recyclerView.removeItemDecoration(dividerItemDecoration);
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setItemAnimator(null);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

@@ -154,6 +154,7 @@
         <activity
             android:name="com.google.zxing.client.android.share.ShareActivity"
             android:screenOrientation="user"
+            android:theme="@style/CaptureTheme"
             android:stateNotNeeded="true">
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SHARE" />

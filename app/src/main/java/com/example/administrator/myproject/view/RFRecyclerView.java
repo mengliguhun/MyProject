@@ -1,9 +1,7 @@
 package com.example.administrator.myproject.view;
 
-import java.util.ArrayList;
-
 import android.content.Context;
-import android.graphics.Color;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -11,23 +9,20 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 /**
  * Created by shichaohui on 2015/8/3 0003.
  * <br/>
- * 可以添加HanderView、FooterView，并且HanderView的背景可以伸缩的RecyclerView
+ * 可以添加HanderView、FooterView
  */
-public class RFRecyclerView extends RecyclerView implements Runnable {
+public class RFRecyclerView extends RecyclerView {
 
     private static Context mContext;
 
     private ArrayList<View> mHeaderViews = new ArrayList<View>();
     private ArrayList<View> mFootViews = new ArrayList<View>();
-    private Adapter mAdapter;
-
-    int bgColor = Color.WHITE; // 刷新View的颜色
-
-
-
+    private Adapter mRecyclerViewAdapter;
     public RFRecyclerView(Context context) {
         this(context, null);
     }
@@ -43,9 +38,7 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
 
     private void init(Context context) {
         mContext = context;
-       
         setOverScrollMode(OVER_SCROLL_NEVER);
-        post(this);
     }
 
     /**
@@ -55,9 +48,9 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
      */
     public void addHeaderView(View view) {
         mHeaderViews.add(view);
-        if (mAdapter != null) {
-            if (!(mAdapter instanceof WrapAdapter)) {
-                mAdapter = new WrapAdapter(mHeaderViews, mFootViews, mAdapter);
+        if (mRecyclerViewAdapter != null) {
+            if (!(mRecyclerViewAdapter instanceof WrapAdapter)) {
+                mRecyclerViewAdapter = new WrapAdapter(mHeaderViews, mFootViews, mRecyclerViewAdapter);
             }
         }
     }
@@ -70,21 +63,24 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
     public void addFootView(final View view) {
         mFootViews.clear();
         mFootViews.add(view);
-        if (mAdapter != null) {
-            if (!(mAdapter instanceof WrapAdapter)) {
-                mAdapter = new WrapAdapter(mHeaderViews, mFootViews, mAdapter);
+        if (mRecyclerViewAdapter != null) {
+            if (!(mRecyclerViewAdapter instanceof WrapAdapter)) {
+                mRecyclerViewAdapter = new WrapAdapter(mHeaderViews, mFootViews, mRecyclerViewAdapter);
             }
         }
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-        
         // 使用包装了头部和脚部的适配器
-        adapter = new WrapAdapter(mHeaderViews, mFootViews, adapter);
-        super.setAdapter(adapter);
-        
-        mAdapter = adapter;
+
+        if (mHeaderViews.size()>0 || mFootViews.size() >0){
+            mRecyclerViewAdapter = new WrapAdapter(mHeaderViews, mFootViews, adapter);
+        }
+       else {
+            mRecyclerViewAdapter =adapter;
+        }
+        super.setAdapter(mRecyclerViewAdapter);
     }
 
     @Override
@@ -99,55 +95,10 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        LayoutManager manager = getLayoutManager();
-        
-        layoutStaggeredGridHeadAttach((StaggeredGridLayoutManager) manager);
-        
-//        if (((WrapAdapter) mAdapter).getFootersCount() > 0) {
-//            // 脚部先隐藏
-//            mFootViews.get(0).setVisibility(GONE);
-//        }
-    }
-
-    /**
-     * 给StaggeredGridLayoutManager附加头部和滑动过度监听
-     *
-     * @param manager
-     */
-    private void layoutStaggeredGridHeadAttach(StaggeredGridLayoutManager manager) {
-        
-        // 从前向后查找Header并设置为充满一行
-        View view;
-        for (int i = 0; i < mAdapter.getItemCount(); i++) {
-            if (((WrapAdapter) mAdapter).isHeader(i)) {
-                view = getChildAt(i);
-                ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams())
-                        .setFullSpan(true);
-                view.requestLayout();
-            } else {
-                break;
-            }
-        }
-    }
-
-    /**
-     * 给StaggeredGridLayoutManager附加脚部
-     *
-     * @param view
-     */
-    private void layoutStaggeredGridFootAttach(View view) {
-        // Footer设置为充满一行
-        ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams())
-                .setFullSpan(true);
-        // view.requestLayout();
-    }
     /**
      * 自定义带有头部/脚部的适配器
      */
     private class WrapAdapter extends Adapter<ViewHolder> {
-
         private Adapter mAdapter;
 
         private ArrayList<View> mHeaderViews;
@@ -211,14 +162,38 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
         }
 
         @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if(manager instanceof GridLayoutManager) {
+                final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+                gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        return getItemViewType(position) == 0 ? 1 : gridManager.getSpanCount();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onViewAttachedToWindow(ViewHolder holder) {
+            super.onViewAttachedToWindow(holder);
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+            if(getItemViewType(holder.getLayoutPosition()) != 0){
+                if(lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+                    StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
+                    p.setFullSpan(true);
+                }
+            }
+
+        }
+
+        @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == RecyclerView.INVALID_TYPE) {
                 return new HeaderViewHolder(mHeaderViews.get(headerPosition++));
             } else if (viewType == RecyclerView.INVALID_TYPE - 1) {
-                StaggeredGridLayoutManager.LayoutParams params = new StaggeredGridLayoutManager.LayoutParams(
-                        StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT, StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT);
-                params.setFullSpan(true);
-                mFootViews.get(0).setLayoutParams(params);
                 return new HeaderViewHolder(mFootViews.get(0));
             }
             return mAdapter.onCreateViewHolder(parent, viewType);
@@ -286,22 +261,7 @@ public class RFRecyclerView extends RecyclerView implements Runnable {
             }
         }
     }
-
-    /**
-     * 刷新和加载更多数据的监听接口
-     */
-    public interface LoadDataListener {
-
-        /**
-         * 执行刷新
-         */
-        void onRefresh();
-
-        /**
-         * 执行加载更多
-         */
-        void onLoadMore();
-
+    public void notifyDataSetChanged(){
+        getAdapter().notifyDataSetChanged();
     }
-
 }

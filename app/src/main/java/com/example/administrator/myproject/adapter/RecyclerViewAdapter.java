@@ -1,6 +1,5 @@
 package com.example.administrator.myproject.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -8,14 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,7 +19,6 @@ import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httputils.HttpUtils;
 import com.example.administrator.myproject.utils.GraphicUtils;
 import com.example.administrator.myproject.utils.ImageLoaderUtil;
-import com.example.administrator.myproject.view.BezierView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yqritc.scalablevideoview.ScalableType;
 import com.yqritc.scalablevideoview.ScalableVideoView;
@@ -38,7 +31,7 @@ import java.util.List;
  * Created by Administrator on 2015/12/24.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<FunnyListResult.ItemsEntity> objects = new ArrayList<>();
     private Context context;
@@ -50,32 +43,59 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.layoutInflater = LayoutInflater.from(context);
         displayMetrics = context.getResources().getDisplayMetrics();
     }
+
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (isPositionHeader(position))
+//            return RecyclerView.INVALID_TYPE;
+//
+//        return super.getItemViewType(position);
+//    }
+
+//    private boolean isPositionHeader(int position) {
+//        return position == 0;
+//    }
+
     @Override
-    public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(layoutInflater,parent);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//       if (viewType == RecyclerView.INVALID_TYPE){
+//           return new HeaderViewHolder(layoutInflater,parent);
+//       }
+        return new ItemViewHolder(layoutInflater,parent);
     }
-
     @Override
-    public void onBindViewHolder(RecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+//        if (holder instanceof HeaderViewHolder){
+//
+//        }else {
+            initializeViews(objects.get(position),(ItemViewHolder)holder);
+//        }
 
-        initializeViews(objects.get(position),holder);
     }
 
     @Override
     public int getItemCount() {
         return objects.size();
     }
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+        public HeaderViewHolder(LayoutInflater inflater, ViewGroup parent) {
+            this(inflater.inflate(R.layout.listview_item, parent, false));
+        }
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+    public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView text;
         private ImageView image;
         private ScalableVideoView textureView;
         private ProgressBar progressBar;
         private ImageView play;
-        public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        public ItemViewHolder(LayoutInflater inflater, ViewGroup parent) {
             this(inflater.inflate(R.layout.listview_item, parent, false));
         }
 
-        public ViewHolder(View view) {
+        public ItemViewHolder(View view) {
             super(view);
             text = (TextView) view.findViewById(R.id.text);
             image = (ImageView) view.findViewById(R.id.image);
@@ -96,7 +116,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
     }
-    private void initializeViews(Object object, final ViewHolder holder) {
+    private void initializeViews(Object object, final ItemViewHolder holder) {
         //TODO implement
         final FunnyListResult.ItemsEntity entity = (FunnyListResult.ItemsEntity) object;
         holder.text.setText(entity.getContent());
