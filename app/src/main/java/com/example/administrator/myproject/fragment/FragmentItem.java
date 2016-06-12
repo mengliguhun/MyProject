@@ -130,18 +130,16 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (rootView == null) {
+//        if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_blank, null);
-
-
-        } else {
-
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (parent != null) {
-                parent.removeView(rootView);
-            }
-
-        }
+//        } else {
+//
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (parent != null) {
+//                parent.removeView(rootView);
+//            }
+//
+//        }
 
         return rootView;
     }

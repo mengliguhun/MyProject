@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
         tabLayout.setSelectedTabIndicatorHeight(0);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-
+//        viewPager.setOffscreenPageLimit(3);
     }
 
     @Override
