@@ -121,9 +121,19 @@ final class CameraConfigurationManager {
     display.getSize(theScreenResolution);
     screenResolution = theScreenResolution;
     Log.i(TAG, "Screen resolution in current orientation: " + screenResolution);
-    cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolution);
+
+    //竖屏图片拉伸解决
+    Point screenResolutionForCamera = new Point();
+    screenResolutionForCamera.x = screenResolution.x;
+    screenResolutionForCamera.y = screenResolution.y;
+    // preview size is always something like 480*320, other 320*480
+    if (screenResolution.x < screenResolution.y) {
+      screenResolutionForCamera.x = screenResolution.y;
+      screenResolutionForCamera.y = screenResolution.x;
+    }
+    cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);
     Log.i(TAG, "Camera resolution: " + cameraResolution);
-    bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolution);
+    bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);
     Log.i(TAG, "Best available preview size: " + bestPreviewSize);
 
     boolean isScreenPortrait = screenResolution.x < screenResolution.y;
