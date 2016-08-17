@@ -3,10 +3,8 @@ package com.example.administrator.myproject.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.administrator.myproject.fragment.FragmentItem;
-import com.example.administrator.myproject.fragment.IndexPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,7 @@ public class MyFragmentViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setTitles(List<String> titles) {
+        fragments.clear();
         if (titles != null){
             for (int i=0;i < titles.size(); i++) {
                 fragments.add(FragmentItem.newInstance(i+"", titles.get(i)));

@@ -97,6 +97,7 @@ public final class EncodeActivity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_share:
+
         share();
         return true;
       case R.id.menu_encode:

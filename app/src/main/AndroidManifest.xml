@@ -133,6 +133,7 @@
             android:stateNotNeeded="true" />
         <activity
             android:name="com.google.zxing.client.android.encode.EncodeActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:stateNotNeeded="true">
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.ENCODE" />

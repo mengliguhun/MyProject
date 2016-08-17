@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,8 +156,8 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
 
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
         linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.activity_custom_views,null));
+        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.activity_custom_views,null));
         recyclerView.setHasFixedSize(true);
         recyclerView.removeItemDecoration(dividerItemDecoration);
         recyclerView.addItemDecoration(dividerItemDecoration);
