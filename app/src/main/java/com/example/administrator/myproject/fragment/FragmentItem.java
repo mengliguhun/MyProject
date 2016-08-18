@@ -157,7 +157,9 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
         linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
+
 //        recyclerView.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.activity_custom_views,null));
+
         recyclerView.setHasFixedSize(true);
         recyclerView.removeItemDecoration(dividerItemDecoration);
         recyclerView.addItemDecoration(dividerItemDecoration);
