@@ -195,7 +195,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
 
                     int firstVisibleItem = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
                     Log.e("firstVisibleItem",firstVisibleItem+" onScrollStateChanged");
-                    if (firstVisibleItem >=0 && currentPos != firstVisibleItem){
+                    if (firstVisibleItem >=0 && currentPos != firstVisibleItem && currentPos >=0){
                         if (newState == RecyclerView.SCROLL_STATE_IDLE){
                             currentPos = firstVisibleItem;
                             updateVideoItem(currentPos,fragmentVisible);

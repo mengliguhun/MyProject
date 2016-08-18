@@ -138,8 +138,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.progressBar.setVisibility(View.GONE);
             holder.play.setVisibility(View.VISIBLE);
 
-            int width = displayMetrics.widthPixels-GraphicUtils.dip2px(context,20);
-            int height = width *entity.getPic_size().get(1)/entity.getPic_size().get(0);
+            final int width = displayMetrics.widthPixels-GraphicUtils.dip2px(context,20);
+            final int height = width *entity.getPic_size().get(1)/entity.getPic_size().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
             ImageLoader.getInstance()
@@ -168,6 +168,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
 
                 }
+
                 holder.textureView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -179,11 +180,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             }
                     }
                 });
+                holder.textureView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        holder.textureView.reset();
+                        holder.play.setVisibility(View.VISIBLE);
+                    }
+                });
                 holder.play.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         holder.play.setVisibility(View.GONE);
-
+                        try {
+                            holder.textureView.setDataSource(context, Uri.parse(entity.getHigh_url()));
+                            holder.textureView.onSurfaceTextureAvailable(holder.textureView.getSurfaceTexture(),width,height);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         if (!holder.textureView.isPlaying()) {
                             holder.progressBar.setVisibility(View.VISIBLE);
                             holder.textureView.prepareAsync(new MediaPlayer.OnPreparedListener() {
