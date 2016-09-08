@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.adapter.RecyclerViewAdapter;
 import com.example.administrator.myproject.bean.FunnyListResult;
-import com.example.administrator.myproject.httputils.HttpUtils;
+import com.example.administrator.myproject.httpapis.HttpApi;
 import com.example.administrator.myproject.view.DividerItemDecoration;
 import com.example.administrator.myproject.view.HaloToast;
 import com.example.administrator.myproject.view.RFRecyclerView;
@@ -22,9 +22,7 @@ import com.example.administrator.myproject.view.RFRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import rx.Subscriber;
 
 /**
  * create an instance of this fragment.
@@ -73,26 +71,39 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     private View rootView;
     private List<FunnyListResult.ItemsEntity> list = new ArrayList<>();
     private RecyclerViewAdapter recyclerViewAdapter;
-    private Callback<FunnyListResult> callback = new Callback<FunnyListResult>() {
+
+    private Subscriber<FunnyListResult> callback = new Subscriber<FunnyListResult>() {
         @Override
-        public void onResponse(Response<FunnyListResult> response, Retrofit retrofit) {
+        public void onCompleted() {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            isLoadingMore = false;
+            swipeRefreshLayout.setRefreshing(false);
+            HaloToast.show(getActivity(), e.getMessage());
+        }
+
+        @Override
+        public void onNext(FunnyListResult funnyListResult) {
             swipeRefreshLayout.setRefreshing(false);
 
-            if (response.code() == 200) {
+            if (funnyListResult != null) {
 
-                if (response.body() !=null && response.body().getItems() !=null){
+                if (funnyListResult.getItems() !=null){
                     if (!isLoadingMore){
-                        if (response.body().getItems().size()>0){
+                        if (funnyListResult.getItems().size()>0){
                             list.clear();
-                            list.addAll(response.body().getItems());
+                            list.addAll(funnyListResult.getItems());
                         }
                     }
                     else{
-                        if (response.body().getItems().size()<30){
+                        if (funnyListResult.getItems().size()<30){
                             HaloToast.show(getActivity(), "加载完成");
                             isLoadingMoreAll = true;
                         }
-                        list.addAll(response.body().getItems());
+                        list.addAll(funnyListResult.getItems());
                     }
                 }
 
@@ -105,14 +116,6 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
             } else {
                 HaloToast.show(getActivity(), "服务器错误");
             }
-        }
-
-
-        @Override
-        public void onFailure(Throwable t) {
-            isLoadingMore = false;
-            swipeRefreshLayout.setRefreshing(false);
-            HaloToast.show(getActivity(), t.getMessage());
         }
     };
 
@@ -272,13 +275,13 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onLoadMore(){
         pageNo++;
         if (mParam1.equals("0")){
-            HttpUtils.getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
+            HttpApi.getInstance().getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
         }
         else if(mParam1.equals("1")){
-            HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpApi.getInstance().getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
         else if(mParam1.equals("2")){
-            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpApi.getInstance().getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
     }
     @Override
@@ -288,16 +291,16 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         currentPos = -1;
         isLoadingMoreAll = false;
         if (mParam1.equals("0")){
-            HttpUtils.getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
+            HttpApi.getInstance().getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
         }
         else if(mParam1.equals("1")){
-            HttpUtils.getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpApi.getInstance().getFunnyImgListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
         else if(mParam1.equals("2")){
-            HttpUtils.getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
+            HttpApi.getInstance().getFunnyVideoListResult(callback, pageNo + "", pageSize + "", "", rqcount + "");
         }
         else {
-            HttpUtils.getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
+            HttpApi.getInstance().getFunnyTextListResult(callback,pageNo+"",pageSize+"","",rqcount+"");
         }
     }
 

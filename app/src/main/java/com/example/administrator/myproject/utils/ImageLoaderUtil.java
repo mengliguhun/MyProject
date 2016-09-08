@@ -51,9 +51,9 @@ public class ImageLoaderUtil {
 	public static DisplayImageOptions getDisplayImageOptions(){
 
 		DisplayImageOptions options = new DisplayImageOptions.Builder()  
-	        .showImageOnLoading(R.drawable.common_signin_btn_icon_disabled_light)            //加载图片时的图片
-	        .showImageForEmptyUri(R.drawable.common_signin_btn_icon_disabled_light)         //没有图片资源时的默认图片
-	        .showImageOnFail(R.drawable.common_signin_btn_icon_disabled_light)              //加载失败时的图片
+	        .showImageOnLoading(R.mipmap.ic_insert_photo_black)            //加载图片时的图片
+	        .showImageForEmptyUri(R.mipmap.ic_insert_photo_black)         //没有图片资源时的默认图片
+	        .showImageOnFail(R.mipmap.ic_insert_photo_black)              //加载失败时的图片
 	        .cacheInMemory(true)                               //启用内存缓存  
 	        .cacheOnDisk(true)                                 //启用外存缓存  
 	        .considerExifParams(true)                          //启用EXIF和JPEG图像格式  

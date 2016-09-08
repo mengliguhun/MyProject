@@ -91,21 +91,12 @@ public class MainActivity extends BaseActivity
         adapter = new MyFragmentViewPagerAdapter(getSupportFragmentManager(),titles);
         viewPager.setAdapter(adapter);
 
-//        tabLayout.setupWithViewPager(viewPager);
-//        viewPager.setCurrentItem(1);//解决默认0不选中
-//        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-//
-//            TabLayout.Tab tab = tabLayout.getTabAt(i);
-//            if (tab != null) {
-//                tab.setCustomView(getTabView(i));
-//            }
-//        }
-//        viewPager.setCurrentItem(0);
-
         setupWithViewPager(viewPager,tabLayout);
 
     }
-    //解决默认0不选中
+    /**
+     * 解决默认0不选中
+     */
     public void setupWithViewPager(@NonNull ViewPager viewPager,TabLayout tabLayout) {
         final PagerAdapter adapter = viewPager.getAdapter();
         if (adapter == null) {

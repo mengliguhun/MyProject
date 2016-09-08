@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.bean.FunnyListResult;
-import com.example.administrator.myproject.httputils.HttpUtils;
+import com.example.administrator.myproject.httpapis.HttpApi;
 import com.example.administrator.myproject.utils.GraphicUtils;
 import com.example.administrator.myproject.utils.ImageLoaderUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -129,8 +129,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int height = width *entity.getImage_size().getM().get(1)/entity.getImage_size().getM().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
+//            Picasso.with(context).load(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + "")).into(holder.image);
             ImageLoader.getInstance()
-                    .displayImage(HttpUtils.getImageUrl(entity.getImage(), entity.getId() + ""), holder.image, ImageLoaderUtil.getDisplayImageOptions());
+                    .displayImage(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""), holder.image, ImageLoaderUtil.getDisplayImageOptions());
         }
         else if (!TextUtils.isEmpty(entity.getPic_url())){
             holder.image.setVisibility(View.VISIBLE);
@@ -144,6 +145,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.image.setLayoutParams(params);
             ImageLoader.getInstance()
                     .displayImage(entity.getPic_url(), holder.image, ImageLoaderUtil.getDisplayImageOptions());
+//            Picasso.with(context).load(entity.getPic_url()).into(holder.image);
             holder.textureView.setLayoutParams(params);
 
             try {
