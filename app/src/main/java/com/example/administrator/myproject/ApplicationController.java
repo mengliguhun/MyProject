@@ -2,7 +2,6 @@ package com.example.administrator.myproject;
 
 import android.app.Application;
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.example.administrator.myproject.utils.DeviceUuidFactory;
 import com.example.administrator.myproject.utils.ImageLoaderUtil;
@@ -40,8 +39,8 @@ public class ApplicationController extends Application {
 
         deviceidInfo = deviceidInfo(getApplicationContext());
         deviceUuid = new DeviceUuidFactory(getApplicationContext()).getDeviceUuid();
-        
-    }  
+
+    }
   
     /** 
      * @return ApplicationController singleton instance 

@@ -14,12 +14,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httpapis.HttpApi;
 import com.example.administrator.myproject.utils.GraphicUtils;
-import com.example.administrator.myproject.utils.ImageLoaderUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yqritc.scalablevideoview.ScalableType;
 import com.yqritc.scalablevideoview.ScalableVideoView;
 
@@ -129,9 +128,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int height = width *entity.getImage_size().getM().get(1)/entity.getImage_size().getM().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
-//            Picasso.with(context).load(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + "")).into(holder.image);
-            ImageLoader.getInstance()
-                    .displayImage(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""), holder.image, ImageLoaderUtil.getDisplayImageOptions());
+//            ImageLoader.getInstance()
+//                    .displayImage(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""), holder.image, ImageLoaderUtil.getDisplayImageOptions());
+
+//            Picasso.with(context)
+//                    .load(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""))
+//                    .placeholder(R.mipmap.ic_insert_photo_black)
+//                    .error(R.mipmap.ic_insert_photo_black)
+//                    .into(holder.image);
+            Glide.with(context)
+                    .load(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""))
+                    .centerCrop()
+                    .placeholder(R.mipmap.ic_insert_photo_black)
+                    .error(R.mipmap.ic_insert_photo_black)
+                    .crossFade()
+                    .into(holder.image);
         }
         else if (!TextUtils.isEmpty(entity.getPic_url())){
             holder.image.setVisibility(View.VISIBLE);
@@ -143,9 +154,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final int height = width *entity.getPic_size().get(1)/entity.getPic_size().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
-            ImageLoader.getInstance()
-                    .displayImage(entity.getPic_url(), holder.image, ImageLoaderUtil.getDisplayImageOptions());
-//            Picasso.with(context).load(entity.getPic_url()).into(holder.image);
+//            ImageLoader.getInstance()
+//                    .displayImage(entity.getPic_url(), holder.image, ImageLoaderUtil.getDisplayImageOptions());
+//            Picasso.with(context)
+//                    .load(entity.getPic_url())
+//                    .placeholder(R.mipmap.ic_insert_photo_black)
+//                    .error(R.mipmap.ic_insert_photo_black)
+//                    .into(holder.image);
+            Glide.with(context)
+                    .load(entity.getPic_url())
+                    .centerCrop()
+                    .placeholder(R.mipmap.ic_ondemand_video_black)
+                    .error(R.mipmap.ic_ondemand_video_black)
+                    .crossFade()
+                    .into(holder.image);
+
             holder.textureView.setLayoutParams(params);
 
             try {
