@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -227,6 +228,7 @@ public class RFRecyclerView extends RecyclerView {
 
         @Override
         public int getItemViewType(int position) {
+            Log.e("position","position:"+position);
             int numHeaders = getHeadersCount();
             if (position < numHeaders) {
                 return RecyclerView.INVALID_TYPE;

@@ -45,30 +45,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 //    @Override
 //    public int getItemViewType(int position) {
+//        Log.e("position","position:"+position);
 //        if (isPositionHeader(position))
 //            return RecyclerView.INVALID_TYPE;
 //
 //        return super.getItemViewType(position);
 //    }
-
+//
 //    private boolean isPositionHeader(int position) {
 //        return position == 0;
 //    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//       if (viewType == RecyclerView.INVALID_TYPE){
-//           return new HeaderViewHolder(layoutInflater,parent);
-//       }
         return new ItemViewHolder(layoutInflater,parent);
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//        if (holder instanceof HeaderViewHolder){
-//
-//        }else {
-            initializeViews(objects.get(position),(ItemViewHolder)holder);
-//        }
+        initializeViews(objects.get(position),(ItemViewHolder)holder);
 
     }
 
@@ -76,14 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemCount() {
         return objects.size();
     }
-    public class HeaderViewHolder extends RecyclerView.ViewHolder{
-        public HeaderViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            this(inflater.inflate(R.layout.listview_item, parent, false));
-        }
-        public HeaderViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
+
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView text;
         private ImageView image;
