@@ -14,6 +14,7 @@
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 录音权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
@@ -69,6 +70,7 @@
         </activity>
         <activity android:name=".CustomViewsActivity"></activity>
         <activity android:name=".SpeexRecorderActivity"></activity>
+        <activity android:name=".GifViewsActivity"></activity>
 
         <activity
             android:name="com.google.zxing.client.android.CaptureActivity"

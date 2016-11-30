@@ -59,4 +59,22 @@
         <attr name="progress" />
         <attr name="direction" />
     </declare-styleable>
+
+    <!-- 圆形图片 -->
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <!-- 有脚标的圆形图片 -->
+    <declare-styleable name="BadgeCircleImageView">
+        <attr name="footer_img_res" format="reference" />
+        <attr name="footer_img_size_dp" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="GifImageView">
+        <attr name="auto_play" format="boolean"></attr>
+    </declare-styleable>
 </resources>

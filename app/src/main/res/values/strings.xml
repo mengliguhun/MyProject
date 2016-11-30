@@ -4,13 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_base">BaseActivity</string>
 
-    <string name="qrcode_name">条码扫描器</string>
     <string name="app_picker_name">应用</string>
     <string name="bookmark_picker_name">书签</string>
     <string name="button_add_calendar">添加至日程表</string>
@@ -70,13 +65,6 @@
     <string name="msg_intent_failed">抱歉，无法打开应用。条码内容可能无效。</string>
     <string name="msg_invalid_value">值无效</string>
     <string name="msg_redirect">重定向</string>
-    <string name="msg_sbc_book_not_searchable">抱歉，无法找到此图书。</string>
-    <string name="msg_sbc_failed">抱歉，搜索时遇到错误。</string>
-    <string name="msg_sbc_no_page_returned">无页面返回</string>
-    <string name="msg_sbc_page">页面</string>
-    <string name="msg_sbc_results">结果</string>
-    <string name="msg_sbc_searching_book">搜索图书…</string>
-    <string name="msg_sbc_snippet_unavailable">摘录不可用</string>
     <string name="msg_share_explanation">您可以通过在自己的手机上显示条码，并使用其它手机扫描此条码的方式进行分享</string>
     <string name="msg_share_text">或键入一些文字</string>
     <string name="msg_sure">确定吗？</string>
@@ -133,6 +121,34 @@
     <string name="result_text">找到纯文本</string>
     <string name="result_uri">找到 URL </string>
     <string name="result_wifi">找到 Wi-Fi 配置</string>
-    <string name="sbc_name">Google 图书搜索</string>
     <string name="wifi_changing_network">连接到 Wi-Fi \u2026</string>
+
+
+    <!-- session -->
+
+    <!-- 通讯录 -->
+
+    <!-- 群 -->
+
+    <!-- 消息提醒 -->
+
+    <!-- 自定义通知 -->
+
+    <!-- 消息类型 -->
+
+    <!-- location -->
+
+    <!-- about -->
+
+    <!-- 云信SDK所需文案 -->
+
+    <!--RTS白板-->
+
+    <!-- setting -->
+
+    <!-- 多端登录 -->
+
+    <!-- 阅后即焚 -->
+
+    <!-- 个人名片 -->
 </resources>
