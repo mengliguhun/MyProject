@@ -141,9 +141,9 @@ public class GifView extends ImageView implements View.OnClickListener {
                     // 还没开始播放就只绘制GIF图片的第一帧，并绘制一个开始按钮
                     mMovie.setTime(0);
                     mMovie.draw(canvas, 0, 0);
-                    int offsetW = (mImageWidth - mStartButton.getWidth()) / 2;
-                    int offsetH = (mImageHeight - mStartButton.getHeight()) / 2;
-                    canvas.drawBitmap(mStartButton, offsetW, offsetH, null);
+//                    int offsetW = (mImageWidth - mStartButton.getWidth()) / 2;
+//                    int offsetH = (mImageHeight - mStartButton.getHeight()) / 2;
+//                    canvas.drawBitmap(mStartButton, offsetW, offsetH, null);
                 }
             }
         }
@@ -154,7 +154,7 @@ public class GifView extends ImageView implements View.OnClickListener {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (mMovie != null) {
             // 如果是GIF图片则重写设定PowerImageView的大小
-            setMeasuredDimension(mImageWidth, mImageHeight);
+//            setMeasuredDimension(mImageWidth, mImageHeight);
         }
     }
 

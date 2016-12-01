@@ -44,7 +44,7 @@ import java.security.NoSuchAlgorithmException;
  * {@link ImageWorker} class and its subclasses. Use
  * {@link ImageCache#getInstance(ImageCacheParams)} to get an instance of this
  * class, although usually a cache should be added directly to an {@link ImageWorker} by calling
- * {@link ImageWorker#addImageCache(ImageCacheParams)}.
+ * {@link ImageWorker#addImageCache(Context,ImageCacheParams)}.
  */
 public class ImageCache {
     private static final String TAG = "ImageCache";
@@ -53,7 +53,7 @@ public class ImageCache {
     private static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 5; // 5MB
 
     // Default disk cache size in bytes
-    private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 100; // 10MB
 
     private static final int DISK_CACHE_INDEX = 0;
 
@@ -367,7 +367,7 @@ public class ImageCache {
         /**
          * Create a set of image cache parameters that can be provided to
          * {@link ImageCache#getInstance(ImageCacheParams)} or
-         * {@link ImageWorker#addImageCache(ImageCacheParams)}.
+         * {@link ImageWorker#addImageCache(Context,ImageCacheParams)}.
          * @param context A context to use.
          */
         public ImageCacheParams(Context context) {
@@ -377,7 +377,7 @@ public class ImageCache {
         /**
          * Create a set of image cache parameters that can be provided to
          * {@link ImageCache#getInstance(ImageCacheParams)} or
-         * {@link ImageWorker#addImageCache(ImageCacheParams)}.
+         * {@link ImageWorker#addImageCache(Context,ImageCacheParams)}.
          * @param context A context to use.
          * @param diskCacheDirectoryName A unique subdirectory name that will be appended to the
          *                               application cache directory. Usually "cache" or "images"

@@ -93,14 +93,12 @@ public class ImageWorker {
 
         byte[] value = null;
 
-        if (mImageCache != null) {
-            value = mImageCache.getBitmapFromMemCache(String.valueOf(data));
-        }
-
         if (value != null) {
             // Bitmap found in memory cache
             try {
+                Log.e("ddddd","GifDrawable:"+ System.currentTimeMillis());
                 imageView.setImageDrawable(new GifDrawable(value));
+                Log.e("ddddd","GifDrawable:"+System.currentTimeMillis());
             } catch (IOException e) {
                 e.printStackTrace();
                 try {
@@ -166,7 +164,7 @@ public class ImageWorker {
 
     public void addImageCache(Context context) {//default
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(context);
-        cacheParams.setMemCacheSizePercent(0.25f);
+        cacheParams.setMemCacheSizePercent(0.1f);
         mImageCache = ImageCache.getInstance(cacheParams);
         new CacheAsyncTask().execute(MESSAGE_INIT_DISK_CACHE);
     }
@@ -282,7 +280,7 @@ public class ImageWorker {
     /**
      * The actual AsyncTask that will asynchronously process the image.
      */
-    private class BitmapWorkerTask extends AsyncTask<Void, Void, byte[]> {
+    private class BitmapWorkerTask extends AsyncTask<Void, Void, Drawable> {
         private Object mData;
         private final WeakReference<ImageView> imageViewReference;
         private final OnImageLoadedListener mOnImageLoadedListener;
@@ -303,14 +301,14 @@ public class ImageWorker {
          * Background processing.
          */
         @Override
-        protected byte[] doInBackground(Void... params) {
+        protected Drawable doInBackground(Void... params) {
             //BEGIN_INCLUDE(load_bitmap_in_background)
             if (BuildConfig.DEBUG_MODE) {
                 Log.d(TAG, "doInBackground - starting work");
             }
 
             final String dataString = String.valueOf(mData);
-            byte[] drawable = null;
+            byte[] bytes = null;
 
             // Wait here if work is paused and the task is not cancelled
             synchronized (mPauseWorkLock) {
@@ -321,23 +319,28 @@ public class ImageWorker {
                 }
             }
 
+            if (mImageCache != null && !isCancelled() && getAttachedImageView() != null
+                    && !mExitTasksEarly) {
+                bytes = mImageCache.getBitmapFromMemCache(dataString);
+            }
+
             // If the image cache is available and this task has not been cancelled by another
             // thread and the ImageView that was originally bound to this task is still bound back
             // to this task and our "exit early" flag is not set then try and fetch the bitmap from
             // the cache
             if (mImageCache != null && !isCancelled() && getAttachedImageView() != null
                     && !mExitTasksEarly) {
-                drawable = mImageCache.getBitmapFromDiskCache(dataString);
+                bytes = mImageCache.getBitmapFromDiskCache(dataString);
             }
 
             // If the bitmap was processed and the image cache is available, then add the processed
             // bitmap to the cache for future use. Note we don't check if the task was cancelled
             // here, if it was, and the thread is still running, we may as well add the processed
             // bitmap to our cache as it might be used again in the future
-            if (drawable != null) {
+            if (bytes != null) {
 
                 if (mImageCache != null) {
-                    mImageCache.addBitmapToCache(dataString, drawable);
+                    mImageCache.addBitmapToCache(dataString, bytes);
                 }
             }
 
@@ -345,6 +348,18 @@ public class ImageWorker {
                 Log.d(TAG, "doInBackground - finished work");
             }
 
+            Drawable drawable = null;
+            try {
+                 drawable = new GifDrawable(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    drawable = new BitmapDrawable(bitmap);
+                }catch (Exception e1){
+
+                }
+            }
             return drawable;
             //END_INCLUDE(load_bitmap_in_background)
         }
@@ -353,7 +368,7 @@ public class ImageWorker {
          * Once the image is processed, associates it to the imageView
          */
         @Override
-        protected void onPostExecute(byte[] value) {
+        protected void onPostExecute(Drawable value) {
             //BEGIN_INCLUDE(complete_background_work)
             boolean success = false;
             // if cancel was called on this task or the "exit early" flag is set then we're done
@@ -367,17 +382,9 @@ public class ImageWorker {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
                 success = true;
-                try {
-                    setImageDrawable(imageView, new GifDrawable(value));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    try {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(value,0,value.length);
-                        setImageDrawable(imageView, new BitmapDrawable(bitmap));
-                    }catch (Exception e1){
 
-                    }
-                }
+                setImageDrawable(imageView, value);
+
             }
             if (mOnImageLoadedListener != null) {
                 mOnImageLoadedListener.onImageLoaded(success);
@@ -386,7 +393,7 @@ public class ImageWorker {
         }
 
         @Override
-        protected void onCancelled(byte[] value) {
+        protected void onCancelled(Drawable value) {
             super.onCancelled(value);
             synchronized (mPauseWorkLock) {
                 mPauseWorkLock.notifyAll();
