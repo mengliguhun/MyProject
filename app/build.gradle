@@ -53,4 +53,6 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
 
 
+    compile project(path: ':ThirdModules:GifModule')
+    compile project(path: ':ThirdModules:Zxing')
 }

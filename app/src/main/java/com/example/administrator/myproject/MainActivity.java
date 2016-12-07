@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
-import com.google.zxing.client.android.CaptureActivity;
+import com.google.zxing.client.android.QrCodeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +146,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_gallery) {
             startActivity(new Intent(this,SpeexRecorderActivity.class));
         } else if (id == R.id.nav_slideshow) {
-            startActivity(new Intent(this,CaptureActivity.class));
+            startActivity(new Intent(this,QrCodeActivity.class));
         } else if (id == R.id.nav_manage) {
             startActivity(new Intent(this,GifViewsActivity.class));
         } else if (id == R.id.nav_share) {

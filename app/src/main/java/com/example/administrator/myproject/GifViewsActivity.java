@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.administrator.myproject.imagecache.ImageWorker;
+import com.gif.gifcache.ImageWorker;
 
 public class GifViewsActivity extends BaseActivity {
     private Toolbar toolbar;
