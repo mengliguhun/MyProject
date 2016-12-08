@@ -146,7 +146,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_gallery) {
             startActivity(new Intent(this,SpeexRecorderActivity.class));
         } else if (id == R.id.nav_slideshow) {
-            startActivity(new Intent(this,QrCodeActivity.class));
+            startActivity(new Intent(this,CaptureActivity.class));
         } else if (id == R.id.nav_manage) {
             startActivity(new Intent(this,GifViewsActivity.class));
         } else if (id == R.id.nav_share) {

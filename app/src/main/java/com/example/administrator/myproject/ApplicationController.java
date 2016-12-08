@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.administrator.myproject.utils.DeviceUuidFactory;
-import com.example.administrator.myproject.utils.ImageLoaderUtil;
 import com.example.administrator.myproject.utils.SystemInfoUtil;
 
 import java.util.UUID;
@@ -29,13 +28,9 @@ public class ApplicationController extends Application {
         //全局异常捕获
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
-        ImageLoaderUtil.initImageLoaderConfiguration(getApplicationContext());
-        
+
         // initialize the singleton  
         sInstance = this;  
-
-//        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
-//        JPushInterface.init(this);     		// 初始化 JPush
 
         deviceidInfo = deviceidInfo(getApplicationContext());
         deviceUuid = new DeviceUuidFactory(getApplicationContext()).getDeviceUuid();
