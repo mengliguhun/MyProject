@@ -115,8 +115,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int height = width *entity.getImage_size().getM().get(1)/entity.getImage_size().getM().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
-//            ImageLoader.getInstance()
-//                    .displayImage(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""), holder.image, ImageLoaderUtil.getDisplayImageOptions());
 
 //            Picasso.with(context)
 //                    .load(HttpApi.getInstance().getImageUrl(entity.getImage(), entity.getId() + ""))
@@ -141,8 +139,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final int height = width *entity.getPic_size().get(1)/entity.getPic_size().get(0);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width,height);
             holder.image.setLayoutParams(params);
-//            ImageLoader.getInstance()
-//                    .displayImage(entity.getPic_url(), holder.image, ImageLoaderUtil.getDisplayImageOptions());
 //            Picasso.with(context)
 //                    .load(entity.getPic_url())
 //                    .placeholder(R.mipmap.ic_insert_photo_black)

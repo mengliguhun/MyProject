@@ -37,7 +37,7 @@ public class GifViewsActivity extends BaseActivity {
     @Override
     public void initViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("自定义View");
+        toolbar.setTitle("GifView");
         setSupportActionBar(toolbar);
 
         linearLayout = (LinearLayout) findViewById(R.id.linear);

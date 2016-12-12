@@ -1,21 +1,16 @@
 package com.example.administrator.myproject;
 
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.example.administrator.myproject.utils.SystemInfoUtil;
-import com.example.administrator.myproject.utils.Utils;
 import com.example.administrator.myproject.view.HaloToast;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.AmbientLightManager;
@@ -61,6 +56,7 @@ public class CaptureActivity extends QrCodeActivity implements SurfaceHolder.Cal
         return R.layout.capture;
     }
 
+    @SuppressWarnings("WrongConstant")
     @Override
     protected void onResume() {
         super.onResume();
@@ -167,7 +163,8 @@ public class CaptureActivity extends QrCodeActivity implements SurfaceHolder.Cal
             }
             if (!TextUtils.isEmpty(displayContents) && !isNumeric(displayContents.toString())){
                 String code = displayContents.toString();
-
+                HaloToast.show(this,code);
+                finish();
             }
             else {
                 restartPreviewAfterDelay(0);
