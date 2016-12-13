@@ -5,8 +5,12 @@ import android.content.Context;
 
 import com.example.administrator.myproject.utils.DeviceUuidFactory;
 import com.example.administrator.myproject.utils.SystemInfoUtil;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.UUID;
+
+import me.drakeet.library.CrashWoodpecker;
+import me.drakeet.library.PatchMode;
 
 /**
  * Example application for adding an image cache to Volley. 
@@ -24,7 +28,16 @@ public class ApplicationController extends Application {
     public UUID deviceUuid;
     @Override
     public void onCreate() {  
-        super.onCreate();  
+        super.onCreate();
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+        // Normal app init code...
+
         //全局异常捕获
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
@@ -35,6 +48,17 @@ public class ApplicationController extends Application {
         deviceidInfo = deviceidInfo(getApplicationContext());
         deviceUuid = new DeviceUuidFactory(getApplicationContext()).getDeviceUuid();
 
+        // 开发调试工具，上线注释掉
+        if(BuildConfig.DEBUG_MODE){
+            CrashWoodpecker.instance()
+                    .withKeys("widget", "me.drakeet")
+                    .setPatchMode(PatchMode.SHOW_LOG_PAGE)
+                    .setPatchDialogUrlToOpen("https://drakeet.me")
+                    .setPassToOriginalDefaultHandler(true)
+                    .flyTo(this);
+
+            com.facebook.stetho.Stetho.initializeWithDefaults(this);
+        }
     }
   
     /** 

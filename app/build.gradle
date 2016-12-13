@@ -53,4 +53,20 @@ dependencies {
 
     compile project(path: ':ThirdModules:GifModule')
     compile project(path: ':ThirdModules:Zxing')
+
+
+
+    //崩溃拦截
+    compile 'me.drakeet.library:crashwoodpecker:2.1.1'
+    // 使用 Chrome 调试应用
+    compile 'com.facebook.stetho:stetho:1.4.1'
+    // 使用 Chrome 拦截 OkHttp 请求
+    compile ('com.facebook.stetho:stetho-okhttp3:1.4.1'){
+        exclude group:'com.squareup.okhttp3', module: 'okhttp'
+    }
+
+    //内存泄漏检测
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
