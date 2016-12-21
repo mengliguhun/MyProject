@@ -43,7 +43,6 @@ public class ImageWorker {
     private static final int FADE_IN_TIME = 200;
     private static volatile ImageWorker imageWorker;
     private ImageCache mImageCache;
-    private Bitmap mLoadingBitmap;
     private boolean mFadeInBitmap = true;
     private boolean mExitTasksEarly = false;
     protected boolean mPauseWork = false;
@@ -87,6 +86,11 @@ public class ImageWorker {
      */
     public void loadImage(Object data, ImageView imageView, int resId,OnImageLoadedListener listener) {
         if (data == null) {
+
+            if (resId>0){
+                imageView.setImageResource(resId);
+            }
+
             return;
         }
 
@@ -106,7 +110,7 @@ public class ImageWorker {
             else {
                 final BitmapWorkerTask task = new BitmapWorkerTask(data, imageView,listener);
                 final AsyncDrawable asyncDrawable =
-                        new AsyncDrawable(mResources, mLoadingBitmap, task);
+                        new AsyncDrawable(mResources, null, task);
                 imageView.setImageDrawable(asyncDrawable);
                 task.executeOnExecutor(AsyncTask.DUAL_THREAD_EXECUTOR);
             }
@@ -146,27 +150,6 @@ public class ImageWorker {
     public void loadImage(Object data, ImageView imageView,int resId) {
         loadImage(data, imageView,resId, null);
     }
-
-    /**
-     * Set placeholder bitmap that shows when the the background thread is running.
-     *
-     * @param bitmap
-     */
-    public ImageWorker setLoadingImage(Bitmap bitmap) {
-        mLoadingBitmap = bitmap;
-        return this;
-    }
-
-    /**
-     * Set placeholder bitmap that shows when the the background thread is running.
-     * 通用
-     * @param resId
-     */
-    public ImageWorker setLoadingImage(int resId) {
-        mLoadingBitmap = BitmapFactory.decodeResource(mResources, resId);
-        return this;
-    }
-
 
     public void addImageCache(Context context) {//default
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(context);
@@ -476,7 +459,7 @@ public class ImageWorker {
         public AsyncDrawable(Resources res, Bitmap bitmap, BitmapWorkerTask bitmapWorkerTask) {
             super(res, bitmap);
             bitmapWorkerTaskReference =
-                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+                    new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
         }
 
         public BitmapWorkerTask getBitmapWorkerTask() {
@@ -485,7 +468,7 @@ public class ImageWorker {
     }
 
     /**
-     * Called when the processing is complete and the final drawable should be 
+     * Called when the processing is complete and the final drawable should be
      * set on the ImageView.
      *
      * @param imageView
@@ -503,7 +486,7 @@ public class ImageWorker {
             // Set background to loading bitmap
 
             imageView.setBackgroundDrawable(
-                    new BitmapDrawable(mResources, bitmap==null?mLoadingBitmap:bitmap));
+                    new BitmapDrawable(mResources, bitmap));
 
             imageView.setImageDrawable(td);
             td.startTransition(FADE_IN_TIME);
@@ -524,7 +507,8 @@ public class ImageWorker {
         if (drawable instanceof TransitionDrawable){
             drawable = ((TransitionDrawable) drawable).getDrawable(1);
         }
-        if (drawable != null && drawable instanceof BitmapDrawable) {
+
+        if (drawable != null &&  !(drawable instanceof AsyncDrawable) && drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             Bitmap bitmap = bitmapDrawable.getBitmap();
             if (bitmap != null && !bitmap.isRecycled()) {
