@@ -11,13 +11,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.example.administrator.myproject.view.RFRecyclerView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 >
-            </com.example.administrator.myproject.view.RFRecyclerView>
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>

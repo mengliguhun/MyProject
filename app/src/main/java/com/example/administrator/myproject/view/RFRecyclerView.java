@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class RFRecyclerView extends RecyclerView {
 
-    private static Context mContext;
+    private  Context mContext;
 
     private ArrayList<View> mHeaderViews = new ArrayList<View>();
     private ArrayList<View> mFootViews = new ArrayList<View>();

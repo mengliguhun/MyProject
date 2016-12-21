@@ -17,7 +17,6 @@ import com.example.administrator.myproject.bean.FunnyListResult;
 import com.example.administrator.myproject.httpapis.HttpApi;
 import com.example.administrator.myproject.view.DividerItemDecoration;
 import com.example.administrator.myproject.view.HaloToast;
-import com.example.administrator.myproject.view.RFRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     private int currentPos=-1;
     private boolean isLoadingMore;
     private boolean isLoadingMoreAll = false;
-    private RFRecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private DividerItemDecoration dividerItemDecoration;
     private LinearLayoutManager linearLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -106,8 +105,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
                         list.addAll(funnyListResult.getItems());
                     }
                 }
-
-                recyclerView.notifyDataSetChanged();
+                recyclerViewAdapter.notifyDataSetChanged();
 
 
                 if (isLoadingMore){
@@ -147,7 +145,7 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     protected void initViews() {
-        recyclerView = (RFRecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
     }
 
@@ -160,7 +158,6 @@ public class FragmentItem extends BaseFragment implements SwipeRefreshLayout.OnR
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
         linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.activity_custom_views,null));
 
         recyclerView.setHasFixedSize(true);
         recyclerView.removeItemDecoration(dividerItemDecoration);

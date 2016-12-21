@@ -61,7 +61,7 @@ public class GifViewsActivity extends BaseActivity {
             imageView.setLayoutParams(params);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             linearLayout.addView(imageView);
-            ImageWorker.getInstance(this).setLoadingImage(R.mipmap.ic_insert_photo_black).loadImage(urls[i], imageView);
+            ImageWorker.getInstance(this).loadImage(urls[i], imageView,R.mipmap.ic_insert_photo_black);
 //            Glide.with(this).load(urls[i]).placeholder(R.mipmap.ic_insert_photo_black).into(imageView);
         }
 

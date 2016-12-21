@@ -5,10 +5,14 @@ import android.content.Context;
 
 import com.example.administrator.myproject.utils.DeviceUuidFactory;
 import com.example.administrator.myproject.utils.SystemInfoUtil;
+import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
+import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import java.util.UUID;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import me.drakeet.library.CrashWoodpecker;
 import me.drakeet.library.PatchMode;
 
@@ -38,6 +42,11 @@ public class ApplicationController extends Application {
         LeakCanary.install(this);
         // Normal app init code...
 
+        // Configure Realm for the application
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
         //全局异常捕获
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
@@ -57,7 +66,13 @@ public class ApplicationController extends Application {
                     .setPassToOriginalDefaultHandler(true)
                     .flyTo(this);
 
-            com.facebook.stetho.Stetho.initializeWithDefaults(this);
+//            com.facebook.stetho.Stetho.initializeWithDefaults(this);
+
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                            .build());
         }
     }
   

@@ -31,5 +31,8 @@ allprojects {
 //        flatDir {
 //            dirs rootProject.ext.library_path
 //        }
+        maven {
+            url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
+        }
     }
 }

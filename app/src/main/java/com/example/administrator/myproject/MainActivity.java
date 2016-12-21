@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
-import com.google.zxing.client.android.QrCodeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,16 +140,16 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
+        if (id == R.id.nav_view) {
             startActivity(new Intent(this,CustomViewsActivity.class));
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_speex) {
             startActivity(new Intent(this,SpeexRecorderActivity.class));
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_barcode) {
             startActivity(new Intent(this,CaptureActivity.class));
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_gif) {
             startActivity(new Intent(this,GifViewsActivity.class));
-        } else if (id == R.id.nav_share) {
-            
+        } else if (id == R.id.nav_realm) {
+            startActivity(new Intent(this,RealmActivity.class));
         } else if (id == R.id.nav_send) {
 
         }
