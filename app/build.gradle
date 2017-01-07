@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 android {
-    compileSdkVersion 24
-    buildToolsVersion "23.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.example.administrator.myproject"
