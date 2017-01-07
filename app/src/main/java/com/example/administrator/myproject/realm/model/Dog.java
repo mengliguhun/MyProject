@@ -8,7 +8,7 @@ import io.realm.RealmObject;
 
 public class Dog extends RealmObject{
     private String name;
-    private String age;
+    private int age;
     private String pic;
 
     public String getPic() {
@@ -27,11 +27,11 @@ public class Dog extends RealmObject{
         this.name = name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 }
