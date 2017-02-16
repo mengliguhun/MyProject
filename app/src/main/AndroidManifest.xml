@@ -47,7 +47,6 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-
     <application
         android:name=".ApplicationController"
         android:allowBackup="true"
@@ -58,8 +57,9 @@
         <meta-data
             android:name="com.example.administrator.myproject.utils.CGlideMoudle"
             android:value="GlideModule" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -68,16 +68,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomViewsActivity"></activity>
-        <activity android:name=".SpeexRecorderActivity"></activity>
-        <activity android:name=".GifViewsActivity"></activity>
-        <activity android:name=".RealmActivity"></activity>
-
-        <activity
-            android:name=".CaptureActivity"
-            android:screenOrientation="portrait"/>
-
-
+        <activity android:name=".activity.CustomViewsActivity" />
+        <activity android:name=".activity.SpeexRecorderActivity" />
+        <activity android:name=".activity.GifViewsActivity" />
+        <activity android:name=".activity.RealmActivity" />
+        <activity android:name=".activity.ScreenCaptureActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".activity.VideoPreviewActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".activity.CaptureActivity" />
     </application>
 
 </manifest>

@@ -11,24 +11,28 @@ import android.view.View;
 public class CustomProgressBar extends View {
 	private Paint mPaint;
 	private Paint mPaintBg;
-
+	private final int mCircleLineStrokeWidth = 10;
 	private int mWidth = 0;
 	private int mHeight = 0;
-
+	private RectF mRectF;
 	private int mPercent = 0;
 
 	public CustomProgressBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
+		mRectF = new RectF();
+
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
-		mPaint.setStrokeWidth(10);
-		mPaint.setColor(Color.RED);
+		mPaint.setStrokeWidth(mCircleLineStrokeWidth);
+		mPaint.setColor(Color.GREEN);
+		mPaint.setStyle(Paint.Style.STROKE);
 
 		mPaintBg = new Paint();
 		mPaintBg.setAntiAlias(true);
-		mPaintBg.setStrokeWidth(10);
-		mPaintBg.setColor(Color.GRAY);
-		
+		mPaintBg.setStrokeWidth(mCircleLineStrokeWidth);
+		mPaintBg.setColor(Color.WHITE);
+		mPaintBg.setStyle(Paint.Style.STROKE);
 		
 	}
 
@@ -43,13 +47,21 @@ public class CustomProgressBar extends View {
 		super.onDraw(canvas);
 		mWidth = getWidth();
 	    mHeight = getHeight();
-		drawBackground(canvas);
-		drawProcess(canvas);
-	}
+		// 位置
+		mRectF.left = mCircleLineStrokeWidth / 2; // 左上角x
+		mRectF.top = mCircleLineStrokeWidth / 2; // 左上角y
+		mRectF.right = mWidth - mCircleLineStrokeWidth / 2; // 左下角x
+		mRectF.bottom = mHeight - mCircleLineStrokeWidth / 2; // 右下角y
 
-	public void init(int width, int height) {
-		mWidth = width;
-		mHeight = height;
+		canvas.drawArc(mRectF, -90, 360, false, mPaintBg);
+
+		if(mPercent >= 100){
+			mPercent = 100;
+		}else if(mPercent <= 0){
+			mPercent = 0;
+		}
+
+		canvas.drawArc(mRectF, -90,  ((float) mPercent / 100) * 360, false, mPaint);
 	}
 
 	public void setProgress(int percent) {
@@ -60,33 +72,17 @@ public class CustomProgressBar extends View {
 	public void setColor(int color) {
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
-		mPaint.setStrokeWidth(10);
+		mPaint.setStrokeWidth(mCircleLineStrokeWidth);
 		mPaint.setColor(color);
 		invalidate();
 	}
 	public void setBgColor(int color) {
 		mPaintBg = new Paint();
 		mPaintBg.setAntiAlias(true);
-		mPaintBg.setStrokeWidth(10);
+		mPaintBg.setStrokeWidth(mCircleLineStrokeWidth);
 		mPaintBg.setColor(color);
 
 		invalidate();
 	}
-	private void drawBackground(Canvas canvas){
-		RectF rect = new RectF(0, 0,  mWidth,  mHeight);
-		canvas.drawRect(rect, mPaintBg);
-	}
-	private void drawProcess(Canvas canvas){
-		if(mPercent >= 100){
-			mPercent = 100;
-		}else if(mPercent <= 0){
-			mPercent = 0;
-		}
-		float f = (float)(mPercent * mWidth) / 100;
-		
-		RectF rect = new RectF(0, 0,  f, mHeight);
-		
-		canvas.drawRect(rect, mPaint);
-		
-	}
+
 }

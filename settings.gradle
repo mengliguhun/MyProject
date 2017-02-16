@@ -1,3 +1,4 @@
 include ':app'
 include ':ThirdModules:GifModule'
 include ':ThirdModules:Zxing'
+include ':ThirdModules:WKVideoPlayer'

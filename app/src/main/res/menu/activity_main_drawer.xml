@@ -11,7 +11,9 @@
         <item android:id="@+id/nav_gif" android:icon="@android:drawable/ic_menu_manage"
             android:title="Gif显示" />
         <item android:id="@+id/nav_realm" android:icon="@android:drawable/ic_menu_manage"
-        android:title="Realm DB" />
+            android:title="Realm DB" />
+        <item android:id="@+id/nav_screen_capture" android:icon="@android:drawable/ic_menu_manage"
+            android:title="录屏" />
     </group>
 
     <item android:title="Communicate">

@@ -4,11 +4,11 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
-    useLibrary 'org.apache.http.legacy'
+    //useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.example.administrator.myproject"
-        minSdkVersion 14
-        targetSdkVersion 24
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -22,7 +22,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
             buildConfigField "boolean", "DEBUG_MODE", "true"
         }
     }
@@ -44,9 +44,27 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
-    compile 'com.android.support:support-v4:24.0.0'
+//    compile 'com.squareup.picasso:picasso:2.5.2'
+
+
+    compile project(path: ':ThirdModules:GifModule')
+    compile project(path: ':ThirdModules:Zxing')
+    compile project(path: ':ThirdModules:WKVideoPlayer')
+
+    //崩溃拦截
+    compile('me.drakeet.library:crashwoodpecker:2.1.1') {
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+    // 使用 Chrome 调试应用
+    // 使用 Chrome 拦截 OkHttp 请求
+    compile('com.facebook.stetho:stetho-okhttp3:1.4.1') {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+
+    //内存泄漏检测
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
@@ -54,29 +72,10 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
     compile 'com.yqritc:android-scalablevideoview:1.0.4'
-
-//    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
-    compile project(path: ':ThirdModules:GifModule')
-    compile project(path: ':ThirdModules:Zxing')
-
-
-
-    //崩溃拦截
-    compile ('me.drakeet.library:crashwoodpecker:2.1.1'){
-        exclude group:'com.android.support', module: 'recyclerview-v7'
-    }
-    // 使用 Chrome 调试应用
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.uphyca:stetho_realm:2.0.0'
-    // 使用 Chrome 拦截 OkHttp 请求
-    compile ('com.facebook.stetho:stetho-okhttp3:1.4.1'){
-        exclude group:'com.squareup.okhttp3', module: 'okhttp'
-    }
-
-    //内存泄漏检测
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
