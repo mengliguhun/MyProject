@@ -72,6 +72,9 @@
         <activity android:name=".activity.SpeexRecorderActivity" />
         <activity android:name=".activity.GifViewsActivity" />
         <activity android:name=".activity.RealmActivity" />
+        <activity android:name=".recordscreen.RecordScreenActivity"
+            android:configChanges="keyboardHidden|orientation"
+             />
         <activity android:name=".activity.ScreenCaptureActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".activity.VideoPreviewActivity"

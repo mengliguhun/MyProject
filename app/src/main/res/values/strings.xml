@@ -10,33 +10,15 @@
     <string name="msg_camera_framework_bug">很遗憾，Android 相机出现问题。你可能需要重启设备。</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-
-
-    <!-- session -->
-
-    <!-- 通讯录 -->
-
-    <!-- 群 -->
-
-    <!-- 消息提醒 -->
-
-    <!-- 自定义通知 -->
-
-    <!-- 消息类型 -->
-
-    <!-- location -->
-
-    <!-- about -->
-
-    <!-- 云信SDK所需文案 -->
-
-    <!--RTS白板-->
-
-    <!-- setting -->
-
-    <!-- 多端登录 -->
-
-    <!-- 阅后即焚 -->
-
-    <!-- 个人名片 -->
+    <string name="toggleRecordingOn">Start recording</string>
+    <string name="toggleRecordingOff">Stop recording</string>
+    <string name="frameRateLabel">"Frame rate: "</string>
+    <string name="frameRateFormat">"%1$.3f fps (%2$d dropped)"</string>
+    <string name="glesVersionLabel">"GLES version: "</string>
+    <string name="glesVersionValue">"?"</string>
+    <string name="useBlitFramebuffer">Use glBlitFramebuffer() when recording</string>
+    <string name="nowRecording">" [RECORDING]"</string>
+    <string name="recDrawTwice">Rec: draw twice</string>
+    <string name="recOffscreen">Rec: FBO blit x2</string>
+    <string name="recFramebuffer">Rec: glBlitFramebuffer [hosed]</string>
 </resources>

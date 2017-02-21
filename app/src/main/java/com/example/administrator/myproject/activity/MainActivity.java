@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.adapter.MyFragmentViewPagerAdapter;
 import com.example.administrator.myproject.fragment.FragmentItem;
+import com.example.administrator.myproject.recordscreen.RecordScreenActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,9 +153,11 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_realm) {
             startActivity(new Intent(this,RealmActivity.class));
         } else if (id == R.id.nav_screen_capture) {
-            startActivity(new Intent(this,ScreenCaptureActivity.class));
+//            startActivity(new Intent(this,ScreenCaptureActivity.class));
+            startActivity(new Intent(this,RecordScreenActivity.class));
         }
         else if (id == R.id.nav_send) {
+
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
