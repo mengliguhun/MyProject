@@ -45,6 +45,7 @@
         android:layout_alignBaseline="@+id/fboRecord_button"
         android:layout_alignBottom="@+id/fboRecord_button"
         android:layout_toRightOf="@+id/fboRecord_button"
+        android:textColor="@color/white"
         android:text="" />
 
     <TextView
@@ -54,6 +55,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/fboRecord_button"
         android:text="@string/glesVersionLabel"
+        android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -64,6 +66,7 @@
         android:layout_alignBottom="@+id/glesVersionLabel_text"
         android:layout_toRightOf="@+id/glesVersionLabel_text"
         android:text="@string/glesVersionValue"
+        android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -73,6 +76,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/glesVersionLabel_text"
         android:text="@string/frameRateLabel"
+        android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -83,12 +87,14 @@
         android:layout_alignBottom="@+id/frameRateLabel_text"
         android:layout_toRightOf="@+id/frameRateLabel_text"
         android:text="---"
+        android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/white"
         android:layout_below="@+id/frameRateLabel_text">
 
         <RadioButton
@@ -99,18 +105,12 @@
             android:text="@string/recDrawTwice" />
 
         <RadioButton
-            android:id="@+id/recFbo_radio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onRadioButtonClicked"
-            android:text="@string/recOffscreen" />
-
-        <RadioButton
             android:id="@+id/recFramebuffer_radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onRadioButtonClicked"
             android:text="@string/recFramebuffer" />
+
     </RadioGroup>
 
 </RelativeLayout>

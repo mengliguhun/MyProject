@@ -46,6 +46,7 @@ import com.example.administrator.myproject.recordscreen.gles.FlatShadedProgram;
 import com.example.administrator.myproject.recordscreen.gles.FullFrameRect;
 import com.example.administrator.myproject.recordscreen.gles.GlUtil;
 import com.example.administrator.myproject.recordscreen.gles.MiscUtils;
+import com.example.administrator.myproject.recordscreen.gles.Sprite2d;
 import com.example.administrator.myproject.recordscreen.gles.Texture2dProgram;
 import com.example.administrator.myproject.recordscreen.gles.WindowSurface;
 
@@ -98,14 +99,15 @@ import java.lang.ref.WeakReference;
  * <p>
  * TODO: show the MP4 file name somewhere in the UI so people can find it in the player
  */
-public class RecordScreenActivity extends Activity implements SurfaceHolder.Callback,
+public class RecordScreenActivityCopy extends Activity implements SurfaceHolder.Callback,
         Choreographer.FrameCallback {
-    private static final String TAG = RecordScreenActivity.class.getSimpleName();
+    private static final String TAG = RecordScreenActivityCopy.class.getSimpleName();
 
     // See the (lengthy) notes at the top of HardwareScalerActivity for thoughts about
     // Activity / Surface lifecycle management.
 
     private static final int RECMETHOD_DRAW_TWICE = 0;
+    private static final int RECMETHOD_FBO = 1;
     private static final int RECMETHOD_BLIT_FRAMEBUFFER = 2;
 
     private boolean mRecordingEnabled = false;          // controls button state
@@ -121,7 +123,7 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_fbo);
 
-        mSelectedRecordMethod = RECMETHOD_DRAW_TWICE;
+        mSelectedRecordMethod = RECMETHOD_FBO;
         updateControls();
 
         SurfaceView sv = (SurfaceView) findViewById(R.id.fboActivity_surfaceView);
@@ -340,10 +342,10 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
         private static final int MSG_UPDATE_FPS = 1;
 
         // Weak reference to the Activity; only access this from the UI thread.
-        private WeakReference<RecordScreenActivity> mWeakActivity;
+        private WeakReference<RecordScreenActivityCopy> mWeakActivity;
 
-        public ActivityHandler(RecordScreenActivity activity) {
-            mWeakActivity = new WeakReference<RecordScreenActivity>(activity);
+        public ActivityHandler(RecordScreenActivityCopy activity) {
+            mWeakActivity = new WeakReference<RecordScreenActivityCopy>(activity);
         }
 
         /**
@@ -371,7 +373,7 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
             int what = msg.what;
             //Log.d(TAG, "ActivityHandler [" + this + "]: what=" + what);
 
-            RecordScreenActivity activity = mWeakActivity.get();
+            RecordScreenActivityCopy activity = mWeakActivity.get();
             if (activity == null) {
                 Log.w(TAG, "ActivityHandler.handleMessage: activity is null");
                 return;
@@ -425,7 +427,10 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
         private final Drawable2d mRectDrawable = new Drawable2d(Drawable2d.Prefab.RECTANGLE);
 
         // One spinning triangle, one bouncing rectangle, and four edge-boxes.
-
+        private Sprite2d mTri;
+        private Sprite2d mRect;
+        private Sprite2d mEdges[];
+        private Sprite2d mRecordRect;
         private float mRectVelX, mRectVelY;     // velocity, in viewport units per second
         private float mInnerLeft, mInnerTop, mInnerRight, mInnerBottom;
 
@@ -475,7 +480,15 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
             mIdentityMatrix = new float[16];
             Matrix.setIdentityM(mIdentityMatrix, 0);
 
-            glBitmap = new GLBitmap(RecordScreenActivity.this);
+            mTri = new Sprite2d(mTriDrawable);
+            mRect = new Sprite2d(mRectDrawable);
+            mEdges = new Sprite2d[4];
+            for (int i = 0; i < mEdges.length; i++) {
+                mEdges[i] = new Sprite2d(mRectDrawable);
+            }
+            mRecordRect = new Sprite2d(mRectDrawable);
+
+            glBitmap = new GLBitmap(RecordScreenActivityCopy.this);
         }
 
         /**
@@ -596,18 +609,40 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
             // has the same "feel" on all devices, but the actual path will vary depending
             // on the screen proportions.  We do it here, rather than defining fixed values
             // and tweaking the projection matrix, so that our squares are square.
-
+            mTri.setColor(0.1f, 0.9f, 0.1f);
+            mTri.setScale(smallDim / 4.0f, smallDim / 4.0f);
+            mTri.setPosition(width / 2.0f, height / 2.0f);
+            mRect.setColor(0.9f, 0.1f, 0.1f);
+            mRect.setScale(smallDim / 8.0f, smallDim / 8.0f);
+            mRect.setPosition(width / 2.0f, height / 2.0f);
             mRectVelX = 1 + smallDim / 4.0f;
             mRectVelY = 1 + smallDim / 5.0f;
 
             // left edge
             float edgeWidth = 1 + width / 64.0f;
+            mEdges[0].setScale(edgeWidth, height);
+            mEdges[0].setPosition(edgeWidth / 2.0f, height / 2.0f);
+            // right edge
+            mEdges[1].setScale(edgeWidth, height);
+            mEdges[1].setPosition(width - edgeWidth / 2.0f, height / 2.0f);
+            // top edge
+            mEdges[2].setScale(width, edgeWidth);
+            mEdges[2].setPosition(width / 2.0f, height - edgeWidth / 2.0f);
+            // bottom edge
+            mEdges[3].setScale(width, edgeWidth);
+            mEdges[3].setPosition(width / 2.0f, edgeWidth / 2.0f);
 
+            mRecordRect.setColor(1.0f, 1.0f, 1.0f);
+            mRecordRect.setScale(edgeWidth * 2f, edgeWidth * 2f);
+            mRecordRect.setPosition(edgeWidth / 2.0f, edgeWidth / 2.0f);
 
             // Inner bounding rect, used to bounce objects off the walls.
             mInnerLeft = mInnerBottom = edgeWidth;
             mInnerRight = width - 1 - edgeWidth;
             mInnerTop = height - 1 - edgeWidth;
+
+            Log.d(TAG, "mTri: " + mTri);
+            Log.d(TAG, "mRect: " + mRect);
         }
 
         /**
@@ -617,7 +652,7 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
             GlUtil.checkGlError("prepareFramebuffer start");
 
             int[] values = new int[1];
-
+//            values = glBitmap.createTexture(width,height);
             // Create a texture object and bind it.  This will be the color buffer.
             GLES20.glGenTextures(1, values, 0);
             GlUtil.checkGlError("glGenTextures");
@@ -676,7 +711,7 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
 
             // Switch back to the default framebuffer.
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-            glBitmap.createTexture(values,width,height);
+
             GlUtil.checkGlError("prepareFramebuffer done");
         }
 
@@ -930,8 +965,8 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
                     GLES20.glViewport(0, 0, mWindowSurface.getWidth(), mWindowSurface.getHeight());
                     mWindowSurface.makeCurrent();
 
-                } else /*if (mEglCore.getGlVersion() >= 3 &&
-                        mRecordMethod == RECMETHOD_BLIT_FRAMEBUFFER)*/ {
+                } else if (mEglCore.getGlVersion() >= 3 &&
+                        mRecordMethod == RECMETHOD_BLIT_FRAMEBUFFER) {
                     //Log.d(TAG, "MODE: blitFramebuffer");
                     // Draw the frame, but don't swap it yet.
                     draw();
@@ -963,6 +998,34 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
                     mWindowSurface.makeCurrent();
                     swapResult = mWindowSurface.swapBuffers();
 
+                } else {
+                    //Log.d(TAG, "MODE: offscreen + blit 2x");
+                    // Render offscreen.
+                    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFramebuffer);
+                    GlUtil.checkGlError("glBindFramebuffer");
+                    draw();
+
+                    // Blit to display.
+                    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+                    GlUtil.checkGlError("glBindFramebuffer");
+                    mFullScreen.drawFrame(mOffscreenTexture, mIdentityMatrix);
+                    swapResult = mWindowSurface.swapBuffers();
+
+                    // Blit to encoder.
+                    encoderCore.frameAvailableSoon();
+//                    mVideoEncoder.frameAvailableSoon();
+                    mInputWindowSurface.makeCurrent();
+                    GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);    // again, only really need to
+                    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);     //  clear pixels outside rect
+                    GLES20.glViewport(mVideoRect.left, mVideoRect.top,
+                            mVideoRect.width(), mVideoRect.height());
+                    mFullScreen.drawFrame(mOffscreenTexture, mIdentityMatrix);
+                    mInputWindowSurface.setPresentationTime(timeStampNanos);
+                    mInputWindowSurface.swapBuffers();
+
+                    // Restore previous values.
+                    GLES20.glViewport(0, 0, mWindowSurface.getWidth(), mWindowSurface.getHeight());
+                    mWindowSurface.makeCurrent();
                 }
             }
 
@@ -1024,13 +1087,33 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
             }
             mPrevTimeNanos = timeStampNanos;
 
+            final float ONE_BILLION_F = 1000000000.0f;
+            final float elapsedSeconds = intervalNanos / ONE_BILLION_F;
+
             // Spin the triangle.  We want one full 360-degree rotation every 3 seconds,
             // or 120 degrees per second.
+            final int SECS_PER_SPIN = 3;
+            float angleDelta = (360.0f / SECS_PER_SPIN) * elapsedSeconds;
+            mTri.setRotation(mTri.getRotation() + angleDelta);
 
             // Bounce the rect around the screen.  The rect is a 1x1 square scaled up to NxN.
             // We don't do fancy collision detection, so it's possible for the box to slightly
             // overlap the edges.  We draw the edges last, so it's not noticeable.
-
+            float xpos = mRect.getPositionX();
+            float ypos = mRect.getPositionY();
+            float xscale = mRect.getScaleX();
+            float yscale = mRect.getScaleY();
+            xpos += mRectVelX * elapsedSeconds;
+            ypos += mRectVelY * elapsedSeconds;
+            if ((mRectVelX < 0 && xpos - xscale/2 < mInnerLeft) ||
+                    (mRectVelX > 0 && xpos + xscale/2 > mInnerRight+1)) {
+                mRectVelX = -mRectVelX;
+            }
+            if ((mRectVelY < 0 && ypos - yscale/2 < mInnerBottom) ||
+                    (mRectVelY > 0 && ypos + yscale/2 > mInnerTop+1)) {
+                mRectVelY = -mRectVelY;
+            }
+            mRect.setPosition(xpos, ypos);
         }
 
         /**
@@ -1039,7 +1122,36 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
         private void draw() {
             GlUtil.checkGlError("draw start");
 
-            glBitmap.onDrawFrame();
+            // Clear to a non-black color to make the content easily differentiable from
+            // the pillar-/letter-boxing.
+            GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+//            glBitmap.onDrawFrame();
+            mTri.draw(mProgram, mDisplayProjectionMatrix);
+            mRect.draw(mProgram, mDisplayProjectionMatrix);
+            for (int i = 0; i < 4; i++) {
+                if (false && mPreviousWasDropped) {
+                    mEdges[i].setColor(1.0f, 0.0f, 0.0f);
+                } else {
+                    mEdges[i].setColor(0.5f, 0.5f, 0.5f);
+                }
+                mEdges[i].draw(mProgram, mDisplayProjectionMatrix);
+            }
+
+            // Give a visual indication of the recording method.
+            switch (mRecordMethod) {
+                case RECMETHOD_DRAW_TWICE:
+                    mRecordRect.setColor(1.0f, 0.0f, 0.0f);
+                    break;
+                case RECMETHOD_FBO:
+                    mRecordRect.setColor(0.0f, 1.0f, 0.0f);
+                    break;
+                case RECMETHOD_BLIT_FRAMEBUFFER:
+                    mRecordRect.setColor(0.0f, 0.0f, 1.0f);
+                    break;
+                default:
+            }
+            mRecordRect.draw(mProgram, mDisplayProjectionMatrix);
 
             GlUtil.checkGlError("draw done");
         }
