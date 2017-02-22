@@ -14,6 +14,8 @@
             android:title="Realm DB" />
         <item android:id="@+id/nav_screen_capture" android:icon="@android:drawable/ic_menu_manage"
             android:title="录屏" />
+        <item android:id="@+id/nav_screen_capture_gl" android:icon="@android:drawable/ic_menu_manage"
+            android:title="录屏Gl" />
     </group>
 
     <item android:title="Communicate">

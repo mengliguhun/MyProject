@@ -4,7 +4,7 @@
     android:background="@android:color/black"
     android:orientation="vertical">
 
-    <com.example.administrator.myproject.view.BasicGraffitiView
+    <com.example.administrator.myproject.view.ScaleTransGraffitiView
         android:id="@+id/graffiti"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

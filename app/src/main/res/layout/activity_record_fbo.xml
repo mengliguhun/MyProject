@@ -27,7 +27,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:background="@color/blank"
+        android:visibility="visible"
         android:layout_alignParentTop="true" />
+    <com.example.administrator.myproject.view.BasicGraffitiView
+        android:id="@+id/graffiti"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
 
     <Button
         android:id="@+id/fboRecord_button"

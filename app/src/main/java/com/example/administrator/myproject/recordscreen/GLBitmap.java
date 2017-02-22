@@ -3,12 +3,10 @@ package com.example.administrator.myproject.recordscreen;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
-import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.recordscreen.gles.GlUtil;
 
 import java.nio.ByteBuffer;
@@ -126,7 +124,8 @@ public class GLBitmap {
         return shader;
     }
 
-    public int[] createTexture(int[] mTexNames ,int width, int height) {
+    public int[] createTexture(int[] mTexNames ,Bitmap bitmap,int width, int height) {
+
         mProgram = GLES20.glCreateProgram();
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, VERTEX_SHADER);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, FRAGMENT_SHADER);
@@ -142,7 +141,6 @@ public class GLBitmap {
         this.mTexNames = mTexNames;
 //        GLES20.glGenTextures(1, mTexNames, 0);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.mipmap.ic_launcher);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexNames[0]);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
@@ -154,9 +152,15 @@ public class GLBitmap {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
                 GLES20.GL_REPEAT);
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        bitmap.recycle();
 
-        float ratio = (float) height / width;
+        float ratio = 1;
+//        if (height>width){
+//            ratio = (float) height / width;
+//        }
+//        else {
+//            ratio = (float) width/ height;
+//        }
+
         Matrix.frustumM(mProjectionMatrix, 0, -1, 1, -ratio, ratio, 3, 7);
         Matrix.setLookAtM(mCameraMatrix, 0, 0, 0, 3, 0, 0, 0, 0, 1, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mCameraMatrix, 0);

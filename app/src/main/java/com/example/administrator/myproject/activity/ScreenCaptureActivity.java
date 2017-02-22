@@ -29,9 +29,9 @@ import android.widget.TextView;
 
 import com.example.administrator.myproject.R;
 import com.example.administrator.myproject.utils.TakePhotoTools;
-import com.example.administrator.myproject.view.BasicGraffitiView;
 import com.example.administrator.myproject.view.CustomProgressBar;
 import com.example.administrator.myproject.view.HaloToast;
+import com.example.administrator.myproject.view.ScaleTransGraffitiView;
 
 import java.io.File;
 
@@ -61,7 +61,7 @@ public class ScreenCaptureActivity extends BaseActivity implements View.OnClickL
     private MediaProjectionManager mMediaProjectionManager;
     private MediaRecorder mediaRecorder;
     private Button mButtonToggle;
-    private BasicGraffitiView mGraffitiView;
+    private ScaleTransGraffitiView mGraffitiView;
     private CustomProgressBar mProgressBar;
     private View mRecord;
     private ImageView mRecordingBg,mRecordBtn;
@@ -154,14 +154,17 @@ public class ScreenCaptureActivity extends BaseActivity implements View.OnClickL
         mCountdown = (TextView) findViewById(R.id.count_down);
         mButtonToggle = (Button) findViewById(R.id.close_btn);
         mProgressBar = (CustomProgressBar) findViewById(R.id.custom_progressbar);
-        mGraffitiView = (BasicGraffitiView) findViewById(R.id.graffiti);
+        mGraffitiView = (ScaleTransGraffitiView) findViewById(R.id.graffiti);
         mGraffitiView.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.share_via_barcode));
+        mGraffitiView.setResizeMode(true);
+
         mButtonToggle.setOnClickListener(this);
         mRecord.setOnClickListener(this);
         mPaint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mGraffitiView.setPaintEnable(isChecked);
+                mGraffitiView.setResizeMode(!isChecked);
             }
         });
     }

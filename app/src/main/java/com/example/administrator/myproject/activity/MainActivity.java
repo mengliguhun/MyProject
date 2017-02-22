@@ -153,7 +153,9 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_realm) {
             startActivity(new Intent(this,RealmActivity.class));
         } else if (id == R.id.nav_screen_capture) {
-//            startActivity(new Intent(this,ScreenCaptureActivity.class));
+            startActivity(new Intent(this,ScreenCaptureActivity.class));
+        }
+        else if (id == R.id.nav_screen_capture_gl) {
             startActivity(new Intent(this,RecordScreenActivity.class));
         }
         else if (id == R.id.nav_send) {

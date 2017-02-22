@@ -556,7 +556,7 @@ public class BasicGraffitiView extends View implements ViewTreeObserver.OnGlobal
      * 获取View的宽(减去Padding)
      * @return
      */
-    protected int getViewWidth() {
+    public int getViewWidth() {
         return getWidth() - getPaddingLeft() - getPaddingRight();
     }
 
@@ -564,7 +564,7 @@ public class BasicGraffitiView extends View implements ViewTreeObserver.OnGlobal
      * 获取View的高(减去Padding)
      * @return
      */
-    protected int getViewHeight() {
+    public int getViewHeight() {
         return getHeight() - getPaddingTop() - getPaddingBottom();
     }
 

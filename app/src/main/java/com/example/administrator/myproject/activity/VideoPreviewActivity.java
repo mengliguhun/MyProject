@@ -146,8 +146,8 @@ public class VideoPreviewActivity extends BaseActivity implements View.OnClickLi
         switch (v.getId()){
             case R.id.iv_play:
                 ivPlay.setVisibility(View.GONE);
-                videoPlayer.setVisibility(View.GONE);
-                ivCover.setVisibility(View.VISIBLE);
+                ivCover.setVisibility(View.GONE);
+                videoPlayer.setVisibility(View.VISIBLE);
                 videoPlayer.setAutoHideController(true);
 
                 if(TextUtils.isEmpty(videoPath)){
