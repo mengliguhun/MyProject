@@ -155,7 +155,7 @@ public class ScreenCaptureActivity extends BaseActivity implements View.OnClickL
         mButtonToggle = (Button) findViewById(R.id.close_btn);
         mProgressBar = (CustomProgressBar) findViewById(R.id.custom_progressbar);
         mGraffitiView = (ScaleTransGraffitiView) findViewById(R.id.graffiti);
-        mGraffitiView.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.share_via_barcode));
+        mGraffitiView.setBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.img));
         mGraffitiView.setResizeMode(true);
 
         mButtonToggle.setOnClickListener(this);

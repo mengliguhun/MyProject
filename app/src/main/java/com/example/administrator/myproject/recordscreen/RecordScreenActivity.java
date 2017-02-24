@@ -105,7 +105,7 @@ public class RecordScreenActivity extends Activity implements SurfaceHolder.Call
         updateControls();
 
         mGraffitiView = (BasicGraffitiView) findViewById(R.id.graffiti);
-        mGraffitiView.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.share_via_barcode));
+        mGraffitiView.setBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.img));
         mGraffitiView.setPaintEnable(true);
 
         SurfaceView sv = (SurfaceView) findViewById(R.id.fboActivity_surfaceView);

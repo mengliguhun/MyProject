@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +28,7 @@ import com.example.administrator.myproject.recordscreen.gles.FullFrameRect;
 import com.example.administrator.myproject.recordscreen.gles.GlUtil;
 import com.example.administrator.myproject.recordscreen.gles.Texture2dProgram;
 import com.example.administrator.myproject.recordscreen.gles.WindowSurface;
+import com.example.administrator.myproject.utils.SystemInfoUtil;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -95,10 +95,14 @@ public class RenderThread extends Thread {
     private int[] mTexNames = new int[1];
     private GLBitmap glBitmap;
     private View viewTarget;
+    private Context mContext;
     /**
      * Pass in the SurfaceView's SurfaceHolder.  Note the Surface may not yet exist.
      */
     public RenderThread(Context context, View viewTarget,SurfaceHolder holder, RecordScreenActivity.ActivityHandler ahandler, long refreshPeriodNs) {
+
+        this.mContext = context;
+
         this.viewTarget = viewTarget;
 
         mSurfaceHolder = holder;
@@ -373,8 +377,8 @@ public class RenderThread extends Thread {
         // Record at 1280x720, regardless of the window dimensions.  The encoder may
         // explode if given "strange" dimensions, e.g. a width that is not a multiple
         // of 16.  We can box it as needed to preserve dimensions.
-        final int VIDEO_WIDTH = 1280;
-        final int VIDEO_HEIGHT = 720;
+        final int VIDEO_WIDTH = SystemInfoUtil.getWidth(mContext);
+        final int VIDEO_HEIGHT = SystemInfoUtil.getHeight(mContext);
         int windowWidth = mWindowSurface.getWidth();
         int windowHeight = mWindowSurface.getHeight();
         float windowAspect = (float) windowHeight / (float) windowWidth;
@@ -605,8 +609,7 @@ public class RenderThread extends Thread {
     private void draw() {
         GlUtil.checkGlError("draw start");
 
-        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, getDrawBitmap());
-        glBitmap.onDrawFrame();
+        glBitmap.onDrawFrame(getDrawBitmap());
 
         GlUtil.checkGlError("draw done");
     }
