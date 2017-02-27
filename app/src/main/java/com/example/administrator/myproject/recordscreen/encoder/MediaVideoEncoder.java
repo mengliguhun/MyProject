@@ -37,9 +37,9 @@ public class MediaVideoEncoder extends MediaEncoder {
 
 	private static final String MIME_TYPE = "video/avc";
 	// parameters for recording
-    private static final int FRAME_RATE = 25;
+    private static final int FRAME_RATE = 30;
     private static final float BPP = 0.25f;
-
+	private int bitrate;
     private final int mWidth;
     private final int mHeight;
     private Surface mSurface;
@@ -49,6 +49,14 @@ public class MediaVideoEncoder extends MediaEncoder {
 		if (DEBUG) Log.i(TAG, "MediaVideoEncoder: ");
 		mWidth = width;
 		mHeight = height;
+	}
+
+	public MediaVideoEncoder(final MediaMuxerWrapper muxer, final MediaEncoderListener listener, final int width, final int height,int bitrate) {
+		super(muxer, listener);
+		if (DEBUG) Log.i(TAG, "MediaVideoEncoder: ");
+		mWidth = width;
+		mHeight = height;
+		this.bitrate = bitrate;
 	}
 
 	@Override
@@ -66,7 +74,7 @@ public class MediaVideoEncoder extends MediaEncoder {
 
         final MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);	// API >= 18
-        format.setInteger(MediaFormat.KEY_BIT_RATE, calcBitRate());
+        format.setInteger(MediaFormat.KEY_BIT_RATE, bitrate == 0 ? calcBitRate():bitrate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
 		if (DEBUG) Log.i(TAG, "format: " + format);
@@ -99,12 +107,23 @@ public class MediaVideoEncoder extends MediaEncoder {
 	}
 
 	private int calcBitRate() {
-		final int bitrate = (int)(BPP * FRAME_RATE * mWidth * mHeight);
+		int bitrate = (int)(BPP * FRAME_RATE * mWidth * mHeight);
+		bitrate = Math.min(bitrate,6*1024*1024);//最大6Mbps
 		Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f));
+
+
 		return bitrate;
 	}
 
-    /**
+	public void setBitrate(int bitrate) {
+		this.bitrate = bitrate;
+	}
+
+	public int getBitrate() {
+		return bitrate;
+	}
+
+	/**
      * select the first codec that match a specific MIME type
      * @param mimeType
      * @return null if no codec matched
