@@ -89,7 +89,6 @@ public class ColorTrackView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         measureText();
 
         int width = measureWidth(widthMeasureSpec);
