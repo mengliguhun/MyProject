@@ -70,7 +70,7 @@ public class AutoPollRecyclerView extends RecyclerView {
             AutoPollRecyclerView recyclerView = mReference.get();
             if (recyclerView != null && recyclerView.running &&recyclerView.canRun) {
                 recyclerView.scrollBy(2, 2);
-                recyclerView.postDelayed(recyclerView.autoPollTask,recyclerView.TIME_AUTO_POLL);
+                recyclerView.postDelayed(recyclerView.autoPollTask, TIME_AUTO_POLL);
             }
         }
     }

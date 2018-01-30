@@ -151,6 +151,9 @@ public class CustomViewsActivity extends BaseActivity {
 
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        autoPollRecyclerView.stop();
+    }
 }
